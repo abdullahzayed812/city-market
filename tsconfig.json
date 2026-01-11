@@ -1,21 +1,19 @@
 {
-  "compilerilers": {
+  "compilerOptions": {
     "target": "ES2020",
     "module": "commonjs",
     "lib": ["ES2020"],
-    "outDir": "./dist",
-    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "moduleResolution": "node",
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
-      "@city-market/shared/*": ["../../shared/*"]
+      "@city-market/shared/*": ["./shared/*"]
     }
   },
-  "include": ["src/**/*"],
+  "include": [],
   "exclude": ["node_modules", "dist"]
 }
