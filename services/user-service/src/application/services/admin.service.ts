@@ -1,5 +1,5 @@
 import { ServiceClient } from "../../infrastructure/http/service-client";
-import { Logger } from "../../../../shared/utils/logger";
+import { Logger } from "@city-market/shared";
 
 export interface DashboardStats {
   totalOrders: number;
@@ -9,7 +9,7 @@ export interface DashboardStats {
 }
 
 export class AdminService {
-  constructor(private serviceClient: ServiceClient) {}
+  constructor(private serviceClient: ServiceClient) { }
 
   async getDashboardStats(): Promise<DashboardStats> {
     Logger.info("Fetching dashboard statistics");

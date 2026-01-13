@@ -1,4 +1,4 @@
-import { OrderStatus } from "../../../../shared/enums/order-status";
+import { OrderStatus } from "@city-market/shared";
 import { OrderItem } from "../entities/order-item.entity";
 import { Order } from "../entities/order.entity";
 

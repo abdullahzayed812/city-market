@@ -1,9 +1,14 @@
 import { Pool, RowDataPacket } from "mysql2/promise";
 import { Courier } from "../../core/entities/courier.entity";
 import { ICourierRepository } from "../../core/interfaces/courier.repository";
+import { Database } from "@city-market/shared";
 
 export class CourierRepository implements ICourierRepository {
-  constructor(private pool: Pool) {}
+  private pool: Pool;
+
+  constructor() {
+    this.pool = Database.getInstance().getPool();
+  }
 
   async create(courier: Courier): Promise<Courier> {
     const query = `

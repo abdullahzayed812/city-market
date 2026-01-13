@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import { AdminService } from "../../application/services/admin.service";
-import { ApiResponse } from "../../../../shared/utils/response";
+import { ApiResponse } from "@city-market/shared";
 
 export class AdminController {
-  constructor(private adminService: AdminService) {}
+  constructor(private adminService: AdminService) { }
 
   getDashboard = async (req: Request, res: Response, next: NextFunction) => {
     try {

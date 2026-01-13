@@ -1,11 +1,11 @@
 import { Response, NextFunction } from "express";
 import { ProductService } from "../../application/services/product.service";
-import { ApiResponse } from "../../../../shared/utils/response";
-import { Logger } from "../../../../shared/utils/logger";
-import { AuthRequest } from "../../../api-gateway/src/middleware/auth.middleware";
+import { ApiResponse } from "@city-market/shared";
+import { Logger } from "@city-market/shared";
+import { AuthRequest } from "@city-market/shared";
 
 export class ProductController {
-  constructor(private productService: ProductService) {}
+  constructor(private productService: ProductService) { }
 
   create = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {

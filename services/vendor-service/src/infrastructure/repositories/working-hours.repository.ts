@@ -1,9 +1,14 @@
 import { Pool, RowDataPacket } from "mysql2/promise";
 import { WorkingHours } from "../../core/entities/working-hours.entity";
 import { IWorkingHoursRepository } from "../../core/interfaces/working-hours.repository";
+import { Database } from "@city-market/shared";
 
 export class WorkingHoursRepository implements IWorkingHoursRepository {
-  constructor(private pool: Pool) {}
+  private pool: Pool;
+
+  constructor() {
+    this.pool = Database.getInstance().getPool();
+  }
 
   async create(workingHours: WorkingHours): Promise<WorkingHours> {
     const query = `

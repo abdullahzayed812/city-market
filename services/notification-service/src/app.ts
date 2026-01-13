@@ -1,6 +1,7 @@
 import express from "express";
 import { NotificationService } from "./application/services/notification.service";
-import { eventBus } from "../../shared/events/event-bus";
+import { eventBus } from "@city-market/shared";
+import { errorHandler } from "@city-market/shared";
 
 export const createApp = () => {
   const app = express();
@@ -10,9 +11,13 @@ export const createApp = () => {
   // Initialize notification service (subscribes to events)
   new NotificationService(eventBus);
 
+
+
   app.get("/health", (req, res) => {
     res.json({ status: "healthy", service: "notification-service" });
   });
+
+  app.use(errorHandler);
 
   return app;
 };

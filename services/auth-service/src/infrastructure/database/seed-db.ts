@@ -1,0 +1,66 @@
+import { Database } from "@city-market/shared";
+import bcrypt from "bcrypt";
+import { config } from "../../config/env";
+import { randomUUID } from "crypto";
+
+const seedDb = async () => {
+    const db = Database.getInstance({
+        host: config.dbHost,
+        port: config.dbPort,
+        user: config.dbUser,
+        password: config.dbPassword,
+        database: config.dbName,
+    });
+    const connection = db.getPool();
+
+    try {
+        const passwordHash = await bcrypt.hash("password123", 10);
+
+        const users = [
+            {
+                id: randomUUID(),
+                email: "admin@citymarket.com",
+                password_hash: passwordHash,
+                role: "ADMIN",
+                is_active: true
+            },
+            {
+                id: randomUUID(),
+                email: "customer@citymarket.com",
+                password_hash: passwordHash,
+                role: "CUSTOMER",
+                is_active: true
+            },
+            {
+                id: randomUUID(),
+                email: "vendor@citymarket.com",
+                password_hash: passwordHash,
+                role: "VENDOR",
+                is_active: true
+            },
+            {
+                id: randomUUID(),
+                email: "courier@citymarket.com",
+                password_hash: passwordHash,
+                role: "COURIER",
+                is_active: true
+            }
+        ];
+
+        for (const user of users) {
+            await connection.execute(
+                "INSERT IGNORE INTO users (id, email, password_hash, role, is_active) VALUES (?, ?, ?, ?, ?)",
+                [user.id, user.email, user.password_hash, user.role, user.is_active]
+            );
+        }
+
+        console.log("Database seeded successfully");
+    } catch (error) {
+        console.error("Error seeding database:", error);
+        process.exit(1);
+    } finally {
+        await connection.end();
+    }
+};
+
+seedDb();

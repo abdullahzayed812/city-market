@@ -1,0 +1,20 @@
+CREATE TABLE notifications (
+  id VARCHAR(36) PRIMARY KEY,
+  user_id VARCHAR(36) NOT NULL,
+  type ENUM('ORDER_UPDATE', 'PROMOTION', 'SYSTEM', 'DELIVERY_UPDATE') NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  message TEXT NOT NULL,
+  is_read BOOLEAN DEFAULT FALSE,
+  metadata JSON,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_user_id (user_id),
+  INDEX idx_is_read (is_read)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE notification_preferences (
+  user_id VARCHAR(36) PRIMARY KEY,
+  email_enabled BOOLEAN DEFAULT TRUE,
+  push_enabled BOOLEAN DEFAULT TRUE,
+  sms_enabled BOOLEAN DEFAULT FALSE,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

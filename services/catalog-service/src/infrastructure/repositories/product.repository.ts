@@ -2,9 +2,14 @@ import { Pool, RowDataPacket } from "mysql2/promise";
 import { Product } from "../../core/entities/product.entity";
 import { IProductRepository } from "../../core/interfaces/product.repository";
 import { ProductFilter } from "../../core/dto/product.dto";
+import { Database } from "@city-market/shared";
 
 export class ProductRepository implements IProductRepository {
-  constructor(private pool: Pool) {}
+  private pool: Pool;
+
+  constructor() {
+    this.pool = Database.getInstance().getPool();
+  }
 
   async create(product: Product): Promise<Product> {
     const query = `

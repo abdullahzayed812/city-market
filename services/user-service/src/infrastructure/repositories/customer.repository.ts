@@ -1,9 +1,14 @@
 import { Pool, RowDataPacket } from "mysql2/promise";
 import { Customer } from "../../core/entities/customer.entity";
 import { ICustomerRepository } from "../../core/interfaces/customer.repository";
+import { Database } from "@city-market/shared";
 
 export class CustomerRepository implements ICustomerRepository {
-  constructor(private pool: Pool) {}
+  private pool: Pool;
+
+  constructor() {
+    this.pool = Database.getInstance().getPool();
+  }
 
   async create(customer: Customer): Promise<Customer> {
     const query = "INSERT INTO customers (id, user_id, full_name, phone) VALUES (?, ?, ?, ?)";

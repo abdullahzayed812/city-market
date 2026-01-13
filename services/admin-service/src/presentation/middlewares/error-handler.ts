@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { AppError } from "../../../../shared/utils/errors";
-import { ApiResponse } from "../../../../shared/utils/response";
-import { Logger } from "../../../../shared/utils/logger";
+import { AppError } from "@city-market/shared";
+import { ApiResponse } from "@city-market/shared";
+import { Logger } from "@city-market/shared";
 
 export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof AppError) {

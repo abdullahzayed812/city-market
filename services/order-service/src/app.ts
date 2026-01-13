@@ -6,9 +6,8 @@ import { OrderRepository } from "./infrastructure/repositories/order.repository"
 import { OrderItemRepository } from "./infrastructure/repositories/order-item.repository";
 import { OrderStatusHistoryRepository } from "./infrastructure/repositories/order-status-history.repository";
 import { CatalogHttpClient } from "./infrastructure/http/catalog-http-client";
-import { errorHandler } from "./presentation/middlewares/error-handler";
-import { createPool } from "./config/database";
-import { eventBus } from "../../shared/events/event-bus";
+import { errorHandler } from "@city-market/shared";
+import { eventBus } from "@city-market/shared";
 import { config } from "./config/env";
 
 export const createApp = () => {
@@ -16,11 +15,9 @@ export const createApp = () => {
 
   app.use(express.json());
 
-  const pool = createPool();
-
-  const orderRepo = new OrderRepository(pool);
-  const orderItemRepo = new OrderItemRepository(pool);
-  const statusHistoryRepo = new OrderStatusHistoryRepository(pool);
+  const orderRepo = new OrderRepository();
+  const orderItemRepo = new OrderItemRepository();
+  const statusHistoryRepo = new OrderStatusHistoryRepository();
   const catalogClient = new CatalogHttpClient(config.catalogServiceUrl);
 
   const orderService = new OrderService(orderRepo, orderItemRepo, statusHistoryRepo, catalogClient, eventBus);

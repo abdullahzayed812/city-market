@@ -1,9 +1,14 @@
 import { Pool, RowDataPacket } from "mysql2/promise";
 import { OrderItem } from "../../core/entities/order-item.entity";
 import { IOrderItemRepository } from "../../core/interfaces/order-item.repository";
+import { Database } from "@city-market/shared";
 
 export class OrderItemRepository implements IOrderItemRepository {
-  constructor(private pool: Pool) {}
+  private pool: Pool;
+
+  constructor() {
+    this.pool = Database.getInstance().getPool();
+  }
 
   async createMany(items: OrderItem[]): Promise<void> {
     if (items.length === 0) return;

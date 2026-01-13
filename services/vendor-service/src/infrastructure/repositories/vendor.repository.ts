@@ -1,9 +1,14 @@
 import { Pool, RowDataPacket } from "mysql2/promise";
 import { Vendor } from "../../core/entities/vendor.entity";
 import { IVendorRepository } from "../../core/interfaces/vendor.repository";
+import { Database } from "@city-market/shared";
 
 export class VendorRepository implements IVendorRepository {
-  constructor(private pool: Pool) {}
+  private pool: Pool;
+
+  constructor() {
+    this.pool = Database.getInstance().getPool();
+  }
 
   async create(vendor: Vendor): Promise<Vendor> {
     const query = `

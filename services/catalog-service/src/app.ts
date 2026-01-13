@@ -7,18 +7,14 @@ import { ProductService } from "./application/services/product.service";
 import { CategoryService } from "./application/services/category.service";
 import { ProductRepository } from "./infrastructure/repositories/product.repository";
 import { CategoryRepository } from "./infrastructure/repositories/category.repository";
-import { errorHandler } from "./presentation/middlewares/error-handler";
-import { createPool } from "./config/database";
-
+import { errorHandler } from "@city-market/shared";
 export const createApp = () => {
   const app = express();
 
   app.use(express.json());
 
-  const pool = createPool();
-
-  const productRepo = new ProductRepository(pool);
-  const categoryRepo = new CategoryRepository(pool);
+  const productRepo = new ProductRepository();
+  const categoryRepo = new CategoryRepository();
 
   const productService = new ProductService(productRepo);
   const categoryService = new CategoryService(categoryRepo);

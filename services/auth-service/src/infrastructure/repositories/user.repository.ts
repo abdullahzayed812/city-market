@@ -1,9 +1,14 @@
 import { Pool, RowDataPacket } from "mysql2/promise";
 import { User } from "../../core/entities/user.entity";
 import { IUserRepository } from "../../core/interfaces/user.repository";
+import { Database } from "@city-market/shared";
 
 export class UserRepository implements IUserRepository {
-  constructor(private pool: Pool) {}
+  private pool: Pool;
+
+  constructor() {
+    this.pool = Database.getInstance().getPool();
+  }
 
   async create(user: User): Promise<User> {
     const query = `

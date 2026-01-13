@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import axios, { AxiosRequestConfig } from "axios";
-import { Logger } from "../../shared/utils/logger";
+import { Logger } from "@city-market/shared";
 
 export const createProxyMiddleware = (targetUrl: string) => {
   return async (req: Request, res: Response, next: NextFunction) => {

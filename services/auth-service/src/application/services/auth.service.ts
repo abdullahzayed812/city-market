@@ -7,10 +7,10 @@ import { RegisterDto, LoginDto, TokenPair, TokenPayload } from "../../core/dto/a
 import { User } from "../../core/entities/user.entity";
 import { RefreshToken } from "../../core/entities/refresh-token.entity";
 import { config } from "../../config/env";
-import { ValidationError, UnauthorizedError } from "../../../../shared/utils/errors";
+import { ValidationError, UnauthorizedError } from "@city-market/shared";
 
 export class AuthService {
-  constructor(private userRepo: IUserRepository, private refreshTokenRepo: IRefreshTokenRepository) {}
+  constructor(private userRepo: IUserRepository, private refreshTokenRepo: IRefreshTokenRepository) { }
 
   async register(dto: RegisterDto): Promise<TokenPair> {
     // Validate email
@@ -105,13 +105,13 @@ export class AuthService {
       role: user.role,
     };
 
-    const accessToken = jwt.sign(payload, config.jwtAccessSecret, {
+    const accessToken = jwt.sign(payload, config.jwtAccessSecret as any, {
       expiresIn: config.jwtAccessExpiry,
-    });
+    } as any);
 
-    const refreshToken = jwt.sign(payload, config.jwtRefreshSecret, {
+    const refreshToken = jwt.sign(payload, config.jwtRefreshSecret as any, {
       expiresIn: config.jwtRefreshExpiry,
-    });
+    } as any);
 
     // Store refresh token
     const tokenRecord: RefreshToken = {

@@ -4,16 +4,16 @@ import { IWorkingHoursRepository } from "../../core/interfaces/working-hours.rep
 import { Vendor } from "../../core/entities/vendor.entity";
 import { WorkingHours } from "../../core/entities/working-hours.entity";
 import { CreateVendorDto, UpdateVendorDto, SetWorkingHoursDto } from "../../core/dto/vendor.dto";
-import { ShopStatus } from "../../../../shared/enums/shop-status";
-import { ValidationError, NotFoundError } from "../../../../shared/utils/errors";
-import { EventBus, BaseEvent, EventType } from "../../../../shared/events/event-bus";
+import { ShopStatus } from "@city-market/shared";
+import { ValidationError, NotFoundError } from "@city-market/shared";
+import { EventBus, BaseEvent, EventType } from "@city-market/shared";
 
 export class VendorService {
   constructor(
     private vendorRepo: IVendorRepository,
     private workingHoursRepo: IWorkingHoursRepository,
     private eventBus: EventBus
-  ) {}
+  ) { }
 
   async createVendor(dto: CreateVendorDto): Promise<Vendor> {
     // Check if vendor already exists for this user

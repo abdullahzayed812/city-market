@@ -1,4 +1,4 @@
-import { DeliveryStatus } from "../../../../shared/enums/delivery-status";
+import { DeliveryStatus } from "@city-market/shared";
 
 export interface Delivery {
   id: string;

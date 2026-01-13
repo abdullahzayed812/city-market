@@ -4,10 +4,10 @@ import { IAddressRepository } from "../../core/interfaces/address.repository";
 import { Customer } from "../../core/entities/customer.entity";
 import { Address } from "../../core/entities/address.entity";
 import { CreateCustomerDto, UpdateCustomerDto, CreateAddressDto } from "../../core/dto/customer.dto";
-import { ValidationError, NotFoundError } from "../../../../shared/utils/errors";
+import { ValidationError, NotFoundError } from "@city-market/shared";
 
 export class UserService {
-  constructor(private customerRepo: ICustomerRepository, private addressRepo: IAddressRepository) {}
+  constructor(private customerRepo: ICustomerRepository, private addressRepo: IAddressRepository) { }
 
   async createCustomer(dto: CreateCustomerDto): Promise<Customer> {
     const existing = await this.customerRepo.findByUserId(dto.userId);

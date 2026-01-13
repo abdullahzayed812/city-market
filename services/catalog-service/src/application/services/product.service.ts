@@ -2,10 +2,10 @@ import { randomUUID } from "crypto";
 import { IProductRepository } from "../../core/interfaces/product.repository";
 import { Product } from "../../core/entities/product.entity";
 import { CreateProductDto, UpdateProductDto, ProductFilter } from "../../core/dto/product.dto";
-import { ValidationError, NotFoundError } from "../../../../shared/utils/errors";
+import { ValidationError, NotFoundError } from "@city-market/shared";
 
 export class ProductService {
-  constructor(private productRepo: IProductRepository) {}
+  constructor(private productRepo: IProductRepository) { }
 
   async createProduct(dto: CreateProductDto): Promise<Product> {
     if (dto.price <= 0) {

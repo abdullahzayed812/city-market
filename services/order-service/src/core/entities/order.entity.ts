@@ -1,4 +1,4 @@
-import { OrderStatus } from "../../../../shared/enums/order-status";
+import { OrderStatus } from "@city-market/shared";
 
 export interface Order {
   id: string;

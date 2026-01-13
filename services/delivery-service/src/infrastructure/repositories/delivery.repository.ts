@@ -1,9 +1,14 @@
 import { Pool, RowDataPacket } from "mysql2/promise";
 import { Delivery } from "../../core/entities/delivery.entity";
 import { IDeliveryRepository } from "../../core/interfaces/delivery.repository";
+import { Database } from "@city-market/shared";
 
 export class DeliveryRepository implements IDeliveryRepository {
-  constructor(private pool: Pool) {}
+  private pool: Pool;
+
+  constructor() {
+    this.pool = Database.getInstance().getPool();
+  }
 
   async create(delivery: Delivery): Promise<Delivery> {
     const query = `

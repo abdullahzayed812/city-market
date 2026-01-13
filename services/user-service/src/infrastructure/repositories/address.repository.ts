@@ -1,9 +1,14 @@
 import { Pool, RowDataPacket } from "mysql2/promise";
 import { Address } from "../../core/entities/address.entity";
 import { IAddressRepository } from "../../core/interfaces/address.repository";
+import { Database } from "@city-market/shared";
 
 export class AddressRepository implements IAddressRepository {
-  constructor(private pool: Pool) {}
+  private pool: Pool;
+
+  constructor() {
+    this.pool = Database.getInstance().getPool();
+  }
 
   async create(address: Address): Promise<Address> {
     const query = `

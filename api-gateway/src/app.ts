@@ -2,9 +2,8 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import { createRoutes } from "./routes";
-import { errorHandler } from "./middlewares/error-handler";
 import { rateLimit } from "./middlewares/rate-limit.middleware";
-import { Logger } from "../shared/utils/logger";
+import { Logger, errorHandler } from "@city-market/shared";
 
 export const createApp = () => {
   const app = express();

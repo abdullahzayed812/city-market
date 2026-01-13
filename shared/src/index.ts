@@ -13,3 +13,8 @@ export * from "./events/event-bus";
 export * from "./utils/response";
 export * from "./utils/errors";
 export * from "./utils/logger";
+export * from "./utils/database";
+
+// Middlewares
+export * from "./middlewares/auth.middleware";
+export * from "./middlewares/error-handler.middleware";

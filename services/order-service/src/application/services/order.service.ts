@@ -6,9 +6,9 @@ import { Order } from "../../core/entities/order.entity";
 import { OrderItem } from "../../core/entities/order-item.entity";
 import { OrderStatusHistory } from "../../core/entities/order-status-history.entity";
 import { CreateOrderDto, UpdateOrderStatusDto, OrderWithItems } from "../../core/dto/order.dto";
-import { OrderStatus } from "../../../../shared/enums/order-status";
-import { ValidationError, NotFoundError } from "../../../../shared/utils/errors";
-import { EventBus, EventType } from "../../../../shared/events/event-bus";
+import { OrderStatus } from "@city-market/shared";
+import { ValidationError, NotFoundError } from "@city-market/shared";
+import { EventBus, EventType } from "@city-market/shared";
 import { CatalogHttpClient } from "../../infrastructure/http/catalog-http-client";
 
 const DELIVERY_FEE = 15.0;
@@ -21,7 +21,7 @@ export class OrderService {
     private statusHistoryRepo: IOrderStatusHistoryRepository,
     private catalogClient: CatalogHttpClient,
     private eventBus: EventBus
-  ) {}
+  ) { }
 
   async createOrder(dto: CreateOrderDto): Promise<OrderWithItems> {
     if (dto.items.length === 0) {

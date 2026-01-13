@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import { ICategoryRepository } from "../../core/interfaces/category.repository";
 import { Category } from "../../core/entities/category.entity";
-import { NotFoundError } from "../../../../shared/utils/errors";
+import { NotFoundError } from "@city-market/shared";
 
 export interface CreateCategoryDto {
   name: string;
@@ -9,7 +9,7 @@ export interface CreateCategoryDto {
 }
 
 export class CategoryService {
-  constructor(private categoryRepo: ICategoryRepository) {}
+  constructor(private categoryRepo: ICategoryRepository) { }
 
   async createCategory(dto: CreateCategoryDto): Promise<Category> {
     const category: Category = {

@@ -1,4 +1,4 @@
-import { ShopStatus } from "../../../../shared/enums/shop-status";
+import { ShopStatus } from "@city-market/shared";
 
 export interface Vendor {
   id: string;

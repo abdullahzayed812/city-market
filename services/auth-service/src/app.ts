@@ -4,20 +4,16 @@ import { AuthController } from "./presentation/controllers/auth.controller";
 import { AuthService } from "./application/services/auth.service";
 import { UserRepository } from "./infrastructure/repositories/user.repository";
 import { RefreshTokenRepository } from "./infrastructure/repositories/refresh-token.repository";
-import { errorHandler } from "./presentation/middlewares/error-handler";
-import { createPool } from "./config/database";
+import { errorHandler } from "@city-market/shared";
 
 export const createApp = () => {
   const app = express();
 
   app.use(express.json());
 
-  // Database
-  const pool = createPool();
-
   // Repositories
-  const userRepo = new UserRepository(pool);
-  const refreshTokenRepo = new RefreshTokenRepository(pool);
+  const userRepo = new UserRepository();
+  const refreshTokenRepo = new RefreshTokenRepository();
 
   // Services
   const authService = new AuthService(userRepo, refreshTokenRepo);

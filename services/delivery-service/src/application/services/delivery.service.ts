@@ -5,16 +5,16 @@ import { Courier } from "../../core/entities/courier.entity";
 import { Delivery } from "../../core/entities/delivery.entity";
 import { RegisterCourierDto, UpdateCourierDto } from "../../core/dto/courier.dto";
 import { CreateDeliveryDto, AssignCourierDto, UpdateDeliveryStatusDto } from "../../core/dto/delivery.dto";
-import { DeliveryStatus } from "../../../../shared/enums/delivery-status";
-import { ValidationError, NotFoundError } from "../../../../shared/utils/errors";
-import { EventBus, EventType } from "../../../../shared/events/event-bus";
+import { DeliveryStatus } from "@city-market/shared";
+import { ValidationError, NotFoundError } from "@city-market/shared";
+import { EventBus, EventType } from "@city-market/shared";
 
 export class DeliveryService {
   constructor(
     private courierRepo: ICourierRepository,
     private deliveryRepo: IDeliveryRepository,
     private eventBus: EventBus
-  ) {}
+  ) { }
 
   // Courier management
   async registerCourier(dto: RegisterCourierDto): Promise<Courier> {

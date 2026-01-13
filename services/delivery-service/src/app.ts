@@ -4,19 +4,16 @@ import { DeliveryController } from "./presentation/controllers/delivery.controll
 import { DeliveryService } from "./application/services/delivery.service";
 import { CourierRepository } from "./infrastructure/repositories/courier.repository";
 import { DeliveryRepository } from "./infrastructure/repositories/delivery.repository";
-import { errorHandler } from "./presentation/middlewares/error-handler";
-import { createPool } from "./config/database";
-import { eventBus } from "../../shared/events/event-bus";
+import { errorHandler } from "@city-market/shared";
+import { eventBus } from "@city-market/shared";
 
 export const createApp = () => {
   const app = express();
 
   app.use(express.json());
 
-  const pool = createPool();
-
-  const courierRepo = new CourierRepository(pool);
-  const deliveryRepo = new DeliveryRepository(pool);
+  const courierRepo = new CourierRepository();
+  const deliveryRepo = new DeliveryRepository();
 
   const deliveryService = new DeliveryService(courierRepo, deliveryRepo, eventBus);
 

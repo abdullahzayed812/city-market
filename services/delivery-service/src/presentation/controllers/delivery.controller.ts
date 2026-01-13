@@ -1,11 +1,11 @@
 import { Response, NextFunction } from "express";
 import { DeliveryService } from "../../application/services/delivery.service";
-import { ApiResponse } from "../../../../shared/utils/response";
-import { Logger } from "../../../../shared/utils/logger";
-import { AuthRequest } from "../../../api-gateway/src/middleware/auth.middleware";
+import { ApiResponse } from "@city-market/shared";
+import { Logger } from "@city-market/shared";
+import { AuthRequest } from "@city-market/shared";
 
 export class DeliveryController {
-  constructor(private deliveryService: DeliveryService) {}
+  constructor(private deliveryService: DeliveryService) { }
 
   // Courier management
   registerCourier = async (req: AuthRequest, res: Response, next: NextFunction) => {

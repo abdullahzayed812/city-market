@@ -1,21 +1,17 @@
-import express from "express";
+import express = require("express");
 import { createUserRoutes } from "./presentation/routes/user.routes";
 import { UserController } from "./presentation/controllers/user.controller";
 import { UserService } from "./application/services/user.service";
 import { CustomerRepository } from "./infrastructure/repositories/customer.repository";
 import { AddressRepository } from "./infrastructure/repositories/address.repository";
-import { errorHandler } from "./presentation/middlewares/error-handler";
-import { createPool } from "./config/database";
-
+import { errorHandler } from "@city-market/shared";
 export const createApp = () => {
   const app = express();
 
   app.use(express.json());
 
-  const pool = createPool();
-
-  const customerRepo = new CustomerRepository(pool);
-  const addressRepo = new AddressRepository(pool);
+  const customerRepo = new CustomerRepository();
+  const addressRepo = new AddressRepository();
 
   const userService = new UserService(customerRepo, addressRepo);
 

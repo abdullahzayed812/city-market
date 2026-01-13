@@ -1,9 +1,14 @@
 import { Pool, RowDataPacket } from "mysql2/promise";
 import { Category } from "../../core/entities/category.entity";
 import { ICategoryRepository } from "../../core/interfaces/category.repository";
+import { Database } from "@city-market/shared";
 
 export class CategoryRepository implements ICategoryRepository {
-  constructor(private pool: Pool) {}
+  private pool: Pool;
+
+  constructor() {
+    this.pool = Database.getInstance().getPool();
+  }
 
   async create(category: Category): Promise<Category> {
     const query = "INSERT INTO categories (id, name, description) VALUES (?, ?, ?)";

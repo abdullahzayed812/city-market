@@ -1,9 +1,14 @@
 import { Pool, RowDataPacket } from "mysql2/promise";
 import { RefreshToken } from "../../core/entities/refresh-token.entity";
 import { IRefreshTokenRepository } from "../../core/interfaces/refresh-token.repository";
+import { Database } from "@city-market/shared";
 
 export class RefreshTokenRepository implements IRefreshTokenRepository {
-  constructor(private pool: Pool) {}
+  private pool: Pool;
+
+  constructor() {
+    this.pool = Database.getInstance().getPool();
+  }
 
   async create(token: RefreshToken): Promise<RefreshToken> {
     const query = `
