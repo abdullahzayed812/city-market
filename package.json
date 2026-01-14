@@ -5,8 +5,11 @@
   "private": true,
   "workspaces": [
     "shared",
+    "frontend-shared",
     "api-gateway",
-    "services/*"
+    "services/*",
+    "web/*",
+    "mobile/*"
   ],
   "scripts": {
     "install:all": "npm install && npm run install:shared && npm run install:services",
@@ -43,13 +46,13 @@
     "dev:admin": "cd services/admin-service && npm run dev",
     "dev:notification": "cd services/notification-service && npm run dev",
     "db:create": "node scripts/create-databases.js",
-    "db:migrate": "npm run db:migrate:auth && npm run db:migrate:user && npm run db:migrate:vendor && npm run db:migrate:catalog && npm run db:migrate:order && npm run db:migrate:delivery",
-    "db:migrate:auth": "cd services/auth-service && npm run db:migrate",
-    "db:migrate:user": "cd services/user-service && npm run db:migrate",
-    "db:migrate:vendor": "cd services/vendor-service && npm run db:migrate",
-    "db:migrate:catalog": "cd services/catalog-service && npm run db:migrate",
-    "db:migrate:order": "cd services/order-service && npm run db:migrate",
-    "db:migrate:delivery": "cd services/delivery-service && npm run db:migrate",
+    "db:init": "npm run db:init:auth && npm run db:init:user && npm run db:init:vendor && npm run db:init:catalog && npm run db:init:order && npm run db:init:delivery",
+    "db:init:auth": "cd services/auth-service && npm run db:init",
+    "db:init:user": "cd services/user-service && npm run db:init",
+    "db:init:vendor": "cd services/vendor-service && npm run db:init",
+    "db:init:catalog": "cd services/catalog-service && npm run db:init",
+    "db:init:order": "cd services/order-service && npm run db:init",
+    "db:init:delivery": "cd services/delivery-service && npm run db:init",
     "db:seed": "npm run db:seed:auth && npm run db:seed:user && npm run db:seed:vendor && npm run db:seed:catalog && npm run db:seed:order",
     "db:seed:auth": "cd services/auth-service && npm run db:seed",
     "db:seed:user": "cd services/user-service && npm run db:seed",

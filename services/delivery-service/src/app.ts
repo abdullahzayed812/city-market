@@ -4,16 +4,25 @@ import { DeliveryController } from "./presentation/controllers/delivery.controll
 import { DeliveryService } from "./application/services/delivery.service";
 import { CourierRepository } from "./infrastructure/repositories/courier.repository";
 import { DeliveryRepository } from "./infrastructure/repositories/delivery.repository";
-import { errorHandler } from "@city-market/shared";
+import { errorHandler, Database } from "@city-market/shared";
 import { eventBus } from "@city-market/shared";
+import { config } from "./config/env";
 
 export const createApp = () => {
   const app = express();
 
   app.use(express.json());
 
-  const courierRepo = new CourierRepository();
-  const deliveryRepo = new DeliveryRepository();
+  const db = new Database({
+    host: config.dbHost,
+    port: config.dbPort,
+    user: config.dbUser,
+    password: config.dbPassword,
+    database: config.dbName,
+  });
+
+  const courierRepo = new CourierRepository(db);
+  const deliveryRepo = new DeliveryRepository(db);
 
   const deliveryService = new DeliveryService(courierRepo, deliveryRepo, eventBus);
 

@@ -6,8 +6,8 @@ import { Database } from "@city-market/shared";
 export class RefreshTokenRepository implements IRefreshTokenRepository {
   private pool: Pool;
 
-  constructor() {
-    this.pool = Database.getInstance().getPool();
+  constructor(private db: Database) {
+    this.pool = this.db.getPool();
   }
 
   async create(token: RefreshToken): Promise<RefreshToken> {

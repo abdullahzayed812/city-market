@@ -29,7 +29,7 @@ export const createApp = () => {
   });
 
   // Routes
-  app.use("/api", createRoutes());
+  app.use("/api/v1", createRoutes());
 
   // 404 handler
   app.use((req, res) => {

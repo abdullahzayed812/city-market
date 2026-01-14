@@ -4,16 +4,25 @@ import { AuthController } from "./presentation/controllers/auth.controller";
 import { AuthService } from "./application/services/auth.service";
 import { UserRepository } from "./infrastructure/repositories/user.repository";
 import { RefreshTokenRepository } from "./infrastructure/repositories/refresh-token.repository";
-import { errorHandler } from "@city-market/shared";
+import { errorHandler, Database, Logger } from "@city-market/shared";
+import { config } from "./config/env";
 
 export const createApp = () => {
   const app = express();
 
   app.use(express.json());
 
+  const db = new Database({
+    host: config.dbHost,
+    port: config.dbPort,
+    user: config.dbUser,
+    password: config.dbPassword,
+    database: config.dbName,
+  });
+
   // Repositories
-  const userRepo = new UserRepository();
-  const refreshTokenRepo = new RefreshTokenRepository();
+  const userRepo = new UserRepository(db);
+  const refreshTokenRepo = new RefreshTokenRepository(db);
 
   // Services
   const authService = new AuthService(userRepo, refreshTokenRepo);
@@ -21,8 +30,14 @@ export const createApp = () => {
   // Controllers
   const authController = new AuthController(authService);
 
+  // Request logging
+  app.use((req, res, next) => {
+    Logger.info(`${req.method} ${req.path}`, { ip: req.ip });
+    next();
+  });
+
   // Routes
-  app.use("/auth", createAuthRoutes(authController));
+  app.use("/", createAuthRoutes(authController));
 
   // Health check
   app.get("/health", (req, res) => {

@@ -30,7 +30,16 @@ const initDb = async () => {
     const schemaPath = path.join(__dirname, "schema.sql");
     const schema = fs.readFileSync(schemaPath, "utf8");
 
-    await connection.query(schema);
+    const statements = schema
+      .split(/;\s*$/m) // split on semicolon line endings
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    for (const stmt of statements) {
+      await connection.query(stmt);
+    }
+
+    // await connection.query(schema);
     console.log("Database initialized successfully");
   } catch (error) {
     console.error("Error initializing database:", error);

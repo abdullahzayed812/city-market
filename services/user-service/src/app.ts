@@ -4,14 +4,23 @@ import { UserController } from "./presentation/controllers/user.controller";
 import { UserService } from "./application/services/user.service";
 import { CustomerRepository } from "./infrastructure/repositories/customer.repository";
 import { AddressRepository } from "./infrastructure/repositories/address.repository";
-import { errorHandler } from "@city-market/shared";
+import { errorHandler, Database } from "@city-market/shared";
+import { config } from "./config/env";
 export const createApp = () => {
   const app = express();
 
   app.use(express.json());
 
-  const customerRepo = new CustomerRepository();
-  const addressRepo = new AddressRepository();
+  const db = new Database({
+    host: config.dbHost,
+    port: config.dbPort,
+    user: config.dbUser,
+    password: config.dbPassword,
+    database: config.dbName,
+  });
+
+  const customerRepo = new CustomerRepository(db);
+  const addressRepo = new AddressRepository(db);
 
   const userService = new UserService(customerRepo, addressRepo);
 

@@ -6,8 +6,8 @@ import { Database } from "@city-market/shared";
 export class VendorRepository implements IVendorRepository {
   private pool: Pool;
 
-  constructor() {
-    this.pool = Database.getInstance().getPool();
+  constructor(private db: Database) {
+    this.pool = this.db.getPool();
   }
 
   async create(vendor: Vendor): Promise<Vendor> {

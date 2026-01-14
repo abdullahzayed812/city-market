@@ -6,8 +6,8 @@ import { Database } from "@city-market/shared";
 export class UserRepository implements IUserRepository {
   private pool: Pool;
 
-  constructor() {
-    this.pool = Database.getInstance().getPool();
+  constructor(private db: Database) {
+    this.pool = this.db.getPool();
   }
 
   async create(user: User): Promise<User> {

@@ -4,16 +4,25 @@ import { VendorController } from "./presentation/controllers/vendor.controller";
 import { VendorService } from "./application/services/vendor.service";
 import { VendorRepository } from "./infrastructure/repositories/vendor.repository";
 import { WorkingHoursRepository } from "./infrastructure/repositories/working-hours.repository";
-import { errorHandler } from "@city-market/shared";
+import { errorHandler, Database } from "@city-market/shared";
 import { eventBus } from "@city-market/shared";
+import { config } from "./config/env";
 
 export const createApp = () => {
   const app = express();
 
   app.use(express.json());
 
-  const vendorRepo = new VendorRepository();
-  const workingHoursRepo = new WorkingHoursRepository();
+  const db = new Database({
+    host: config.dbHost,
+    port: config.dbPort,
+    user: config.dbUser,
+    password: config.dbPassword,
+    database: config.dbName,
+  });
+
+  const vendorRepo = new VendorRepository(db);
+  const workingHoursRepo = new WorkingHoursRepository(db);
 
   const vendorService = new VendorService(vendorRepo, workingHoursRepo, eventBus);
 

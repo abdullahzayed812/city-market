@@ -7,8 +7,8 @@ import { Database } from "@city-market/shared";
 export class ProductRepository implements IProductRepository {
   private pool: Pool;
 
-  constructor() {
-    this.pool = Database.getInstance().getPool();
+  constructor(private db: Database) {
+    this.pool = this.db.getPool();
   }
 
   async create(product: Product): Promise<Product> {
