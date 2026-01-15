@@ -1,0 +1,31 @@
+{
+    "common": {
+        "dashboard": "Dashboard",
+        "deliveries": "Deliveries",
+        "earnings": "Earnings",
+        "profile": "Profile",
+        "settings": "Settings",
+        "logout": "Logout",
+        "language": "Language",
+        "arabic": "Arabic",
+        "english": "English",
+        "status": "Status",
+        "online": "Online",
+        "offline": "Offline"
+    },
+    "dashboard": {
+        "active_deliveries": "Active Deliveries",
+        "completed_deliveries": "Completed Deliveries",
+        "today_earnings": "Today's Earnings",
+        "delivery_history": "Delivery History"
+    },
+    "orders": {
+        "pickup_details": "Pickup Details",
+        "customer_address": "Customer Address",
+        "delivery_timeline": "Delivery Timeline",
+        "update_status": "Update Status",
+        "picked_up": "Picked Up",
+        "on_the_way": "On the Way",
+        "delivered": "Delivered"
+    }
+}

@@ -1,0 +1,31 @@
+{
+    "common": {
+        "dashboard": "لوحة التحكم",
+        "deliveries": "الطلبات",
+        "earnings": "الأرباح",
+        "profile": "الملف الشخصي",
+        "settings": "الإعدادات",
+        "logout": "تسجيل الخروج",
+        "language": "اللغة",
+        "arabic": "العربية",
+        "english": "الإنجليزية",
+        "status": "الحالة",
+        "online": "متصل",
+        "offline": "غير متصل"
+    },
+    "dashboard": {
+        "active_deliveries": "الطلبات النشطة",
+        "completed_deliveries": "الطلبات المكتملة",
+        "today_earnings": "أرباح اليوم",
+        "delivery_history": "سجل الطلبات"
+    },
+    "orders": {
+        "pickup_details": "تفاصيل الاستلام",
+        "customer_address": "عنوان العميل",
+        "delivery_timeline": "الجدول الزمني",
+        "update_status": "تحديث الحالة",
+        "picked_up": "تم الاستلام",
+        "on_the_way": "في الطريق",
+        "delivered": "تم التوصيل"
+    }
+}

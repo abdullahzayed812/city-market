@@ -1,0 +1,23 @@
+{
+    "common": {
+        "dashboard": "Dashboard",
+        "orders": "Orders",
+        "products": "Products",
+        "inventory": "Inventory",
+        "profile": "Profile",
+        "payouts": "Payouts",
+        "settings": "Settings",
+        "logout": "Logout",
+        "search": "Search...",
+        "notifications": "Notifications",
+        "language": "Language",
+        "arabic": "Arabic",
+        "english": "English"
+    },
+    "dashboard": {
+        "today_orders": "Today's Orders",
+        "revenue": "Total Revenue",
+        "active_products": "Active Products",
+        "order_summary": "Order Summary"
+    }
+}

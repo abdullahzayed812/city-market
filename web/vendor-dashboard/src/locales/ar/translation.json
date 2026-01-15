@@ -1,0 +1,23 @@
+{
+    "common": {
+        "dashboard": "لوحة التحكم",
+        "orders": "الطلبات",
+        "products": "المنتجات",
+        "inventory": "المخزون",
+        "profile": "الملف الشخصي",
+        "payouts": "المدفوعات",
+        "settings": "الإعدادات",
+        "logout": "تسجيل الخروج",
+        "search": "بحث...",
+        "notifications": "التنبيهات",
+        "language": "اللغة",
+        "arabic": "العربية",
+        "english": "الإنجليزية"
+    },
+    "dashboard": {
+        "today_orders": "طلبات اليوم",
+        "revenue": "إجمالي الإيرادات",
+        "active_products": "المنتجات النشطة",
+        "order_summary": "ملخص الطلبات"
+    }
+}
