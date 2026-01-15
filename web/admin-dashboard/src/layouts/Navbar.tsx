@@ -1,0 +1,55 @@
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import { Globe, User, LogOut } from 'lucide-react';
+
+const Navbar: React.FC = () => {
+    const { t, i18n } = useTranslation();
+
+    const toggleLanguage = () => {
+        const newLang = i18n.language === 'ar' ? 'en' : 'ar';
+        i18n.changeLanguage(newLang);
+    };
+
+    return (
+        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
+            <div className="flex items-center">
+                <h1 className="text-lg font-semibold text-gray-800">
+                    {/* Page title could go here */}
+                </h1>
+            </div>
+            <div className="flex items-center space-x-4 rtl:space-x-reverse">
+                <Button variant="ghost" size="icon" onClick={toggleLanguage}>
+                    <Globe className="h-5 w-5" />
+                    <span className="sr-only">{t('common.language')}</span>
+                </Button>
+
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                            <User className="h-5 w-5" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem>
+                            <User className="me-2 h-4 w-4" />
+                            <span>{t('common.settings')}</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive">
+                            <LogOut className="me-2 h-4 w-4" />
+                            <span>{t('common.logout')}</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
+        </header>
+    );
+};
+
+export default Navbar;

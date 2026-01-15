@@ -5,11 +5,9 @@
   "private": true,
   "workspaces": [
     "shared",
-    "frontend-shared",
     "api-gateway",
     "services/*",
-    "web/*",
-    "mobile/*"
+    "web/*"
   ],
   "scripts": {
     "install:all": "npm install && npm run install:shared && npm run install:services",
@@ -45,6 +43,7 @@
     "dev:delivery": "cd services/delivery-service && npm run dev",
     "dev:admin": "cd services/admin-service && npm run dev",
     "dev:notification": "cd services/notification-service && npm run dev",
+    "dev:admin-dashboard": "cd web/admin-dashboard && npm run dev",
     "db:create": "node scripts/create-databases.js",
     "db:init": "npm run db:init:auth && npm run db:init:user && npm run db:init:vendor && npm run db:init:catalog && npm run db:init:order && npm run db:init:delivery",
     "db:init:auth": "cd services/auth-service && npm run db:init",

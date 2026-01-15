@@ -1,0 +1,24 @@
+{
+    "common": {
+        "dashboard": "لوحة القيادة",
+        "users": "المستخدمين",
+        "orders": "الطلبات",
+        "vendors": "الموردين",
+        "couriers": "المناديب",
+        "revenue": "الإيرادات",
+        "settings": "الإعدادات",
+        "logout": "تسجيل الخروج",
+        "search": "بحث...",
+        "language": "اللغة",
+        "arabic": "العربية",
+        "english": "الإنجليزية"
+    },
+    "dashboard": {
+        "overview": "نظرة عامة",
+        "total_orders": "إجمالي الطلبات",
+        "total_users": "إجمالي المستخدمين",
+        "total_vendors": "إجمالي الموردين",
+        "total_couriers": "إجمالي المناديب",
+        "revenue_summary": "ملخص الإيرادات"
+    }
+}

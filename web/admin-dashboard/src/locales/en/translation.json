@@ -1,0 +1,24 @@
+{
+    "common": {
+        "dashboard": "Dashboard",
+        "users": "Users",
+        "orders": "Orders",
+        "vendors": "Vendors",
+        "couriers": "Couriers",
+        "revenue": "Revenue",
+        "settings": "Settings",
+        "logout": "Logout",
+        "search": "Search...",
+        "language": "Language",
+        "arabic": "Arabic",
+        "english": "English"
+    },
+    "dashboard": {
+        "overview": "Overview",
+        "total_orders": "Total Orders",
+        "total_users": "Total Users",
+        "total_vendors": "Total Vendors",
+        "total_couriers": "Total Couriers",
+        "revenue_summary": "Revenue Summary"
+    }
+}
