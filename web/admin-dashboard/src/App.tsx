@@ -5,22 +5,34 @@ import UsersManagement from './pages/UsersManagement.tsx';
 import OrdersManagement from './pages/OrdersManagement.tsx';
 import CouriersManagement from './pages/CouriersManagement.tsx';
 import FinancialOverview from './pages/FinancialOverview.tsx';
+import LoginPage from './pages/LoginPage.tsx';
+import ProtectedRoute from './components/ProtectedRoute.tsx';
+import { AuthProvider } from './components/AuthProvider.tsx';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<MainLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="users" element={<UsersManagement />} />
-          <Route path="orders" element={<OrdersManagement />} />
-          <Route path="couriers" element={<CouriersManagement />} />
-          <Route path="revenue" element={<FinancialOverview />} />
-          <Route path="settings" element={<div>Settings Page (Coming Soon)</div>} />
-        </Route>
-        <Route path="/login" element={<div>Login Page (Coming Soon)</div>} />
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <MainLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<Dashboard />} />
+            <Route path="users" element={<UsersManagement />} />
+            <Route path="orders" element={<OrdersManagement />} />
+            <Route path="couriers" element={<CouriersManagement />} />
+            <Route path="revenue" element={<FinancialOverview />} />
+            <Route path="settings" element={<div>Settings Page (Coming Soon)</div>} />
+          </Route>
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

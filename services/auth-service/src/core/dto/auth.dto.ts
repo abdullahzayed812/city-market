@@ -1,4 +1,5 @@
 import { UserRole } from "@city-market/shared";
+import { User } from "../entities/user.entity";
 
 export interface RegisterDto {
   email: string;
@@ -14,6 +15,7 @@ export interface LoginDto {
 export interface TokenPair {
   accessToken: string;
   refreshToken: string;
+  user: Omit<User, "passwordHash">;
 }
 
 export interface TokenPayload {

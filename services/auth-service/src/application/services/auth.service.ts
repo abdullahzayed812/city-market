@@ -10,7 +10,7 @@ import { config } from "../../config/env";
 import { ValidationError, UnauthorizedError } from "@city-market/shared";
 
 export class AuthService {
-  constructor(private userRepo: IUserRepository, private refreshTokenRepo: IRefreshTokenRepository) { }
+  constructor(private userRepo: IUserRepository, private refreshTokenRepo: IRefreshTokenRepository) {}
 
   async register(dto: RegisterDto): Promise<TokenPair> {
     // Validate email
@@ -105,13 +105,21 @@ export class AuthService {
       role: user.role,
     };
 
-    const accessToken = jwt.sign(payload, config.jwtAccessSecret as any, {
-      expiresIn: config.jwtAccessExpiry,
-    } as any);
+    const accessToken = jwt.sign(
+      payload,
+      config.jwtAccessSecret as any,
+      {
+        expiresIn: config.jwtAccessExpiry,
+      } as any
+    );
 
-    const refreshToken = jwt.sign(payload, config.jwtRefreshSecret as any, {
-      expiresIn: config.jwtRefreshExpiry,
-    } as any);
+    const refreshToken = jwt.sign(
+      payload,
+      config.jwtRefreshSecret as any,
+      {
+        expiresIn: config.jwtRefreshExpiry,
+      } as any
+    );
 
     // Store refresh token
     const tokenRecord: RefreshToken = {
@@ -124,7 +132,9 @@ export class AuthService {
 
     await this.refreshTokenRepo.create(tokenRecord);
 
-    return { accessToken, refreshToken };
+    const { passwordHash, ...userProfile } = user;
+
+    return { accessToken, refreshToken, user: userProfile };
   }
 
   private isValidEmail(email: string): boolean {
