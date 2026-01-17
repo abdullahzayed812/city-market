@@ -5,7 +5,7 @@ import { Logger } from "@city-market/shared";
 import { AuthRequest } from "@city-market/shared";
 
 export class UserController {
-  constructor(private userService: UserService) { }
+  constructor(private userService: UserService) {}
 
   createCustomer = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {

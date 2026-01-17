@@ -7,7 +7,8 @@ export class AdminController {
 
   getDashboard = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const stats = await this.adminService.getDashboardStats();
+      const token = req.headers.authorization;
+      const stats = await this.adminService.getDashboardStats(token);
       res.json(ApiResponse.success(stats));
     } catch (error) {
       next(error);
@@ -16,9 +17,10 @@ export class AdminController {
 
   getAllOrders = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const token = req.headers.authorization;
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 50;
-      const orders = await this.adminService.getAllOrders(page, limit);
+      const orders = await this.adminService.getAllOrders(page, limit, token);
       res.json(orders);
     } catch (error) {
       next(error);
@@ -27,9 +29,10 @@ export class AdminController {
 
   getAllVendors = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const token = req.headers.authorization;
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 50;
-      const vendors = await this.adminService.getAllVendors(page, limit);
+      const vendors = await this.adminService.getAllVendors(page, limit, token);
       res.json(vendors);
     } catch (error) {
       next(error);
@@ -38,9 +41,10 @@ export class AdminController {
 
   updateVendorCommission = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const token = req.headers.authorization;
       const { vendorId } = req.params;
       const { rate } = req.body;
-      const result = await this.adminService.updateVendorCommission(vendorId, rate);
+      const result = await this.adminService.updateVendorCommission(vendorId, rate, token);
       res.json(result);
     } catch (error) {
       next(error);
@@ -49,8 +53,9 @@ export class AdminController {
 
   suspendVendor = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const token = req.headers.authorization;
       const { vendorId } = req.params;
-      const result = await this.adminService.suspendVendor(vendorId);
+      const result = await this.adminService.suspendVendor(vendorId, token);
       res.json(result);
     } catch (error) {
       next(error);
@@ -59,9 +64,10 @@ export class AdminController {
 
   getAllCouriers = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const token = req.headers.authorization;
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 50;
-      const couriers = await this.adminService.getAllCouriers(page, limit);
+      const couriers = await this.adminService.getAllCouriers(page, limit, token);
       res.json(couriers);
     } catch (error) {
       next(error);
@@ -70,8 +76,9 @@ export class AdminController {
 
   deactivateCourier = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const token = req.headers.authorization;
       const { courierId } = req.params;
-      const result = await this.adminService.deactivateCourier(courierId);
+      const result = await this.adminService.deactivateCourier(courierId, token);
       res.json(result);
     } catch (error) {
       next(error);

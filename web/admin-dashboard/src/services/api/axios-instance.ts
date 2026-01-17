@@ -10,7 +10,7 @@ const axiosInstance = axios.create({
 // Add a request interceptor to attach the auth token
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("auth_token");
+    const token = localStorage.getItem("admin_token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -27,8 +27,9 @@ axiosInstance.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Handle unauthorized error (e.g., redirect to login)
-      localStorage.removeItem("auth_token");
-      window.location.href = "/login";
+      // localStorage.removeItem("admin_token");
+      // localStorage.removeItem("admin_user");
+      // window.location.href = "/login";
     }
     return Promise.reject(error);
   }

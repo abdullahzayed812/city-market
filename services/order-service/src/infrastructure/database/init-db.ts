@@ -4,30 +4,39 @@ import path from "path";
 import { config } from "../../config/env";
 
 const initDb = async () => {
-    const db = Database.getInstance({
-        host: config.dbHost,
-        port: config.dbPort,
-        user: config.dbUser,
-        password: config.dbPassword,
-        database: config.dbName,
-    });
-    const connection = db.getPool();
+  const db = Database.getInstance({
+    host: config.dbHost,
+    port: config.dbPort,
+    user: config.dbUser,
+    password: config.dbPassword,
+    database: config.dbName,
+  });
+  const connection = db.getPool();
 
-    try {
-        await connection.query(`CREATE DATABASE IF NOT EXISTS \`${config.dbName}\`;`);
-        await connection.query(`USE \`${config.dbName}\`;`);
+  try {
+    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${config.dbName}\`;`);
+    await connection.query(`USE \`${config.dbName}\`;`);
 
-        const schemaPath = path.join(__dirname, "schema.sql");
-        const schema = fs.readFileSync(schemaPath, "utf8");
+    const schemaPath = path.join(__dirname, "schema.sql");
+    const schema = fs.readFileSync(schemaPath, "utf8");
 
-        await connection.query(schema);
-        console.log("Database initialized successfully");
-    } catch (error) {
-        console.error("Error initializing database:", error);
-        process.exit(1);
-    } finally {
-        await connection.end();
+    const statements = schema
+      .split(/;\s*$/m) // split on semicolon line endings
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    for (const stmt of statements) {
+      await connection.query(stmt);
     }
+
+    // await connection.query(schema);
+    console.log("Database initialized successfully");
+  } catch (error) {
+    console.error("Error initializing database:", error);
+    process.exit(1);
+  } finally {
+    await connection.end();
+  }
 };
 
 initDb();
