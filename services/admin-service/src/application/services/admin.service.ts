@@ -9,7 +9,7 @@ export interface DashboardStats {
 }
 
 export class AdminService {
-  constructor(private serviceClient: ServiceClient) { }
+  constructor(private serviceClient: ServiceClient) {}
 
   async getDashboardStats(token?: string): Promise<DashboardStats> {
     Logger.info("Fetching dashboard statistics");

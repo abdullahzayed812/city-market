@@ -5,7 +5,7 @@ import { Logger } from "@city-market/shared";
 import { AuthRequest } from "@city-market/shared";
 
 export class OrderController {
-  constructor(private orderService: OrderService) { }
+  constructor(private orderService: OrderService) {}
 
   create = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {

@@ -5,7 +5,7 @@ import { Logger } from "@city-market/shared";
 import { AuthRequest } from "@city-market/shared";
 
 export class VendorController {
-  constructor(private vendorService: VendorService) { }
+  constructor(private vendorService: VendorService) {}
 
   create = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {

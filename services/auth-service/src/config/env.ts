@@ -7,6 +7,6 @@ export const config = {
   dbName: process.env.DB_NAME || "auth_db",
   jwtAccessSecret: process.env.JWT_ACCESS_SECRET || "access_secret_key",
   jwtRefreshSecret: process.env.JWT_REFRESH_SECRET || "refresh_secret_key",
-  jwtAccessExpiry: "15m",
+  jwtAccessExpiry: "7d",
   jwtRefreshExpiry: "7d",
 };

@@ -35,7 +35,7 @@
     "build:delivery": "cd services/delivery-service && npm run build",
     "build:admin": "cd services/admin-service && npm run build",
     "build:notification": "cd services/notification-service && npm run build",
-    "dev": "concurrently     \"npm run dev:gateway\"     \"npm run dev:auth\"     \"npm run dev:user\"     \"npm run dev:vendor\"     \"npm run dev:catalog\"     \"npm run dev:order\"     \"npm run dev:admin\"     \"npm run dev:notification\"     \"npm run dev:admin-dashboard\"",
+    "dev": "concurrently     \"npm run dev:gateway\"     \"npm run dev:auth\"     \"npm run dev:user\"     \"npm run dev:vendor\"     \"npm run dev:catalog\"     \"npm run dev:order\"     \"npm run dev:admin\"     \"npm run dev:notification\"     \"npm run dev:delivery\"     \"npm run dev:admin-dashboard\"",
     "dev:gateway": "cd api-gateway && npm run dev",
     "dev:auth": "cd services/auth-service && npm run dev",
     "dev:user": "cd services/user-service && npm run dev",

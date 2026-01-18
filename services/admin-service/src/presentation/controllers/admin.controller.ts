@@ -3,11 +3,11 @@ import { AdminService } from "../../application/services/admin.service";
 import { ApiResponse } from "@city-market/shared";
 
 export class AdminController {
-  constructor(private adminService: AdminService) { }
+  constructor(private adminService: AdminService) {}
 
   getDashboard = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const token = req.headers.authorization;
+      const token = req.headers.authorization?.split(" ")[1];
       const stats = await this.adminService.getDashboardStats(token);
       res.json(ApiResponse.success(stats));
     } catch (error) {

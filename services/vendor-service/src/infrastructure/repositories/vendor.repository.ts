@@ -47,7 +47,7 @@ export class VendorRepository implements IVendorRepository {
 
   async findAll(limit: number, offset: number): Promise<Vendor[]> {
     const query = "SELECT * FROM vendors ORDER BY created_at DESC LIMIT ? OFFSET ?";
-    const [rows] = await this.pool.execute<RowDataPacket[]>(query, [limit, offset]);
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [limit, offset]);
     return rows.map((row) => this.mapToEntity(row));
   }
 

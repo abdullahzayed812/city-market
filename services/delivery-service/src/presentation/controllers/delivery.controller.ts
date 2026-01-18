@@ -5,7 +5,7 @@ import { Logger } from "@city-market/shared";
 import { AuthRequest } from "@city-market/shared";
 
 export class DeliveryController {
-  constructor(private deliveryService: DeliveryService) { }
+  constructor(private deliveryService: DeliveryService) {}
 
   // Courier management
   registerCourier = async (req: AuthRequest, res: Response, next: NextFunction) => {
@@ -14,6 +14,17 @@ export class DeliveryController {
       const courier = await this.deliveryService.registerCourier(dto);
       Logger.info("Courier registered", { courierId: courier.id });
       res.status(201).json(ApiResponse.success(courier, "Courier registered"));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getAllCouriers = async (req: AuthRequest, res: Response, next: NextFunction) => {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 20;
+      const couriers = await this.deliveryService.getAllCouriers(page, limit);
+      res.json(ApiResponse.success(couriers));
     } catch (error) {
       next(error);
     }

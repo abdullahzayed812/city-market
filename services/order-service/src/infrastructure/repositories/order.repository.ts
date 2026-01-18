@@ -71,7 +71,7 @@ export class OrderRepository implements IOrderRepository {
 
   async findAll(limit: number, offset: number): Promise<Order[]> {
     const query = "SELECT * FROM orders ORDER BY created_at DESC LIMIT ? OFFSET ?";
-    const [rows] = await this.pool.execute<RowDataPacket[]>(query, [limit, offset]);
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [limit, offset]);
     return rows.map((row) => this.mapToEntity(row));
   }
 

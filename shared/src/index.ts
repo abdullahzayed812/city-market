@@ -17,5 +17,4 @@ export * from "./utils/database";
 
 // Middlewares
 export * from "./middlewares/auth.middleware";
-export * from "./middlewares/error-handler";
-export * from "./middlewares/proxy.middleware";
+export * from "./middlewares/error-handler.middleware";

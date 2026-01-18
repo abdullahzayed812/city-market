@@ -6,14 +6,11 @@ import { CustomerRepository } from "./infrastructure/repositories/customer.repos
 import { AddressRepository } from "./infrastructure/repositories/address.repository";
 import { errorHandler, Database, Logger } from "@city-market/shared";
 import { config } from "./config/env";
-import { extractUser } from "./middlewares/auth.middleware";
+
 export const createApp = () => {
   const app = express();
 
   app.use(express.json());
-
-  // Extract user from custom header
-  app.use(extractUser);
 
   const db = new Database({
     host: config.dbHost,

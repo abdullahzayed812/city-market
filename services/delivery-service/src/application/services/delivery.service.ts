@@ -14,7 +14,7 @@ export class DeliveryService {
     private courierRepo: ICourierRepository,
     private deliveryRepo: IDeliveryRepository,
     private eventBus: EventBus
-  ) { }
+  ) {}
 
   // Courier management
   async registerCourier(dto: RegisterCourierDto): Promise<Courier> {
@@ -39,6 +39,15 @@ export class DeliveryService {
     };
 
     return this.courierRepo.create(courier);
+  }
+
+  async getAllCouriers(page: number = 1, limit: number = 20): Promise<Courier[]> {
+    const offset = (page - 1) * limit;
+    const courier = await this.courierRepo.findAll(limit, offset);
+    if (!courier) {
+      throw new NotFoundError("Courier not found");
+    }
+    return courier;
   }
 
   async getCourierById(id: string): Promise<Courier> {
