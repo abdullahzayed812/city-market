@@ -124,6 +124,11 @@ export class DeliveryService {
     return this.deliveryRepo.findByCourier(courierId, limit, offset);
   }
 
+  async getAllDeliveries(page: number = 1, limit: number = 20): Promise<Delivery[]> {
+    const offset = (page - 1) * limit;
+    return this.deliveryRepo.findAll(limit, offset);
+  }
+
   async assignCourier(deliveryId: string, dto: AssignCourierDto): Promise<void> {
     const delivery = await this.getDeliveryById(deliveryId);
     const courier = await this.getCourierById(dto.courierId);

@@ -10,18 +10,18 @@ export const adminApi = {
   updateUserStatus: (id: string, status: string) => axiosInstance.patch(`/admin/users/${id}/status`, { status }),
 
   // Vendors Management
-  getVendors: () => axiosInstance.get("/vendors"),
-  getVendorById: (id: string) => axiosInstance.get(`/vendors/${id}`),
-  updateVendorStatus: (id: string, status: string) => axiosInstance.patch(`/vendors/${id}/status`, { status }),
+  getVendors: () => axiosInstance.get("/admin/vendors"),
+  getVendorById: (id: string) => axiosInstance.get(`/admin/vendors/${id}`),
+  updateVendorStatus: (id: string, status: string) => axiosInstance.patch(`/admin/vendors/${id}/status`, { status }),
 
   // Orders Management
-  getOrders: () => axiosInstance.get("/orders"),
-  getOrderById: (id: string) => axiosInstance.get(`/orders/${id}`),
-  updateOrderStatus: (id: string, status: string) => axiosInstance.patch(`/orders/${id}/status`, { status }),
+  getOrders: () => axiosInstance.get("/admin/orders"),
+  getOrderById: (id: string) => axiosInstance.get(`/admin/orders/${id}`),
+  updateOrderStatus: (id: string, status: string) => axiosInstance.patch(`/admin/orders/${id}/status`, { status }),
 
   // Delivery Monitoring
-  getDeliveries: () => axiosInstance.get("/deliveries"),
-  getCouriers: () => axiosInstance.get("/couriers/available"),
+  getDeliveries: () => axiosInstance.get("/admin/deliveries"),
+  getCouriers: () => axiosInstance.get("/admin/couriers"),
 
   // Financial Overview
   getRevenue: () => axiosInstance.get("/admin/revenue"),

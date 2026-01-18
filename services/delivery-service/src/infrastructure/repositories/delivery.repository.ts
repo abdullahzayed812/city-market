@@ -66,6 +66,12 @@ export class DeliveryRepository implements IDeliveryRepository {
     return rows.map((row) => this.mapToEntity(row));
   }
 
+  async findAll(limit: number, offset: number): Promise<Delivery[]> {
+    const query = "SELECT * FROM deliveries ORDER BY created_at DESC LIMIT ? OFFSET ?";
+    const [rows] = await this.pool.execute<RowDataPacket[]>(query, [limit, offset]);
+    return rows.map((row) => this.mapToEntity(row));
+  }
+
   async update(id: string, data: Partial<Delivery>): Promise<void> {
     const fields: string[] = [];
     const values: any[] = [];

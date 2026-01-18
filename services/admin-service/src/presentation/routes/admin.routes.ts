@@ -17,6 +17,17 @@ export const createAdminRoutes = (controller: AdminController): Router => {
   router.post("/vendors/:vendorId/suspend", authenticate, authorize(UserRole.ADMIN), controller.suspendVendor);
   router.get("/couriers", authenticate, authorize(UserRole.ADMIN), controller.getAllCouriers);
   router.post("/couriers/:courierId/deactivate", authenticate, authorize(UserRole.ADMIN), controller.deactivateCourier);
+  router.get("/users", authenticate, authorize(UserRole.ADMIN), controller.getAllUsers);
+  router.get("/users/:id", authenticate, authorize(UserRole.ADMIN), controller.getUserById);
+  router.patch("/users/:id/status", authenticate, authorize(UserRole.ADMIN), controller.updateUserStatus);
+  router.get("/vendors/:id", authenticate, authorize(UserRole.ADMIN), controller.getVendorById);
+  router.patch("/vendors/:id/status", authenticate, authorize(UserRole.ADMIN), controller.updateVendorStatus);
+  router.get("/orders/:id", authenticate, authorize(UserRole.ADMIN), controller.getOrderById);
+  router.patch("/orders/:id/status", authenticate, authorize(UserRole.ADMIN), controller.updateOrderStatus);
+  router.get("/deliveries", authenticate, authorize(UserRole.ADMIN), controller.getDeliveries);
+  router.get("/couriers/available", authenticate, authorize(UserRole.ADMIN), controller.getAvailableCouriers);
+  router.get("/revenue", authenticate, authorize(UserRole.ADMIN), controller.getRevenue);
+  router.get("/payouts", authenticate, authorize(UserRole.ADMIN), controller.getPayouts);
 
   return router;
 };

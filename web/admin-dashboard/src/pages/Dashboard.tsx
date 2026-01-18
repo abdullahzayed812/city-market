@@ -30,8 +30,9 @@ const Dashboard: React.FC = () => {
     queryFn: async () => {
       try {
         const response = await adminApi.getStats();
-        return response.data;
-      } catch (error) {
+        return response?.data?.data;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+      } catch (error: any) {
         // Return mock data if API fails
         return {
           ordersCount: 1250,
@@ -53,21 +54,21 @@ const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
         <StatCard
           title={t("dashboard.total_orders")}
-          value={stats?.ordersCount}
+          value={stats?.totalOrders}
           icon={ShoppingBag}
           color="bg-blue-500"
         />
-        <StatCard title={t("dashboard.total_users")} value={stats?.usersCount} icon={Users} color="bg-green-500" />
-        <StatCard title={t("dashboard.total_vendors")} value={stats?.vendorsCount} icon={Store} color="bg-purple-500" />
+        <StatCard title={t("dashboard.total_users")} value={stats?.totalUsers} icon={Users} color="bg-green-500" />
+        <StatCard title={t("dashboard.total_vendors")} value={stats?.totalVendors} icon={Store} color="bg-purple-500" />
         <StatCard
           title={t("dashboard.total_couriers")}
-          value={stats?.couriersCount}
+          value={stats?.totalCouriers}
           icon={Truck}
           color="bg-orange-500"
         />
         <StatCard
           title={t("common.revenue")}
-          value={`$${stats?.totalRevenue}`}
+          value={`$${stats?.revenueToday}`}
           icon={DollarSign}
           color="bg-emerald-500"
         />

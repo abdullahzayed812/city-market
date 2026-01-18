@@ -123,4 +123,15 @@ export class DeliveryController {
       next(error);
     }
   };
+
+  getAllDeliveries = async (req: AuthRequest, res: Response, next: NextFunction) => {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 20;
+      const deliveries = await this.deliveryService.getAllDeliveries(page, limit);
+      res.json(ApiResponse.success(deliveries));
+    } catch (error) {
+      next(error);
+    }
+  };
 }

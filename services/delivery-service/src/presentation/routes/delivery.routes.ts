@@ -50,6 +50,7 @@ export const createDeliveryRoutes = (controller: DeliveryController): Router => 
     authorize(UserRole.COURIER, UserRole.ADMIN),
     controller.updateDeliveryStatus
   );
+  router.get("/deliveries", authenticate, authorize(UserRole.ADMIN), controller.getAllDeliveries);
 
   return router;
 };

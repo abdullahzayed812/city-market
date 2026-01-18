@@ -57,4 +57,34 @@ export class AuthController {
       next(error);
     }
   };
+
+  getUsers = async (_req: Request, res: Response, next: NextFunction) => {
+    try {
+      const users = await this.authService.getUsers();
+      res.json(ApiResponse.success(users, "Users retrieved successfully"));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getUserById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const user = await this.authService.getUserById(id);
+      res.json(ApiResponse.success(user, "User retrieved successfully"));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  updateUserStatus = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+      await this.authService.updateUserStatus(id, status);
+      res.json(ApiResponse.success(null, "User status updated successfully"));
+    } catch (error) {
+      next(error);
+    }
+  };
 }

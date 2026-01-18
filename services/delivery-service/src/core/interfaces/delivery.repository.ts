@@ -7,6 +7,7 @@ export interface IDeliveryRepository {
   findByCourier(courierId: string, limit: number, offset: number): Promise<Delivery[]>;
   findPending(): Promise<Delivery[]>;
   findByStatus(status: string): Promise<Delivery[]>;
+  findAll(limit: number, offset: number): Promise<Delivery[]>;
   update(id: string, data: Partial<Delivery>): Promise<void>;
   assignCourier(id: string, courierId: string): Promise<void>;
 }

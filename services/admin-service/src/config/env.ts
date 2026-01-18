@@ -4,4 +4,5 @@ export const config = {
   vendorServiceUrl: process.env.VENDOR_SERVICE_URL || "http://localhost:3003",
   deliveryServiceUrl: process.env.DELIVERY_SERVICE_URL || "http://localhost:3006",
   userServiceUrl: process.env.USER_SERVICE_URL || "http://localhost:3002",
+  authServiceUrl: process.env.AUTH_SERVICE_URL || "http://localhost:3001",
 };

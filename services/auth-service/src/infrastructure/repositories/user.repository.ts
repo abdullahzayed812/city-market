@@ -37,6 +37,12 @@ export class UserRepository implements IUserRepository {
     return this.mapToEntity(rows[0]);
   }
 
+  async findAll(): Promise<User[]> {
+    const query = "SELECT * FROM users";
+    const [rows] = await this.pool.execute<RowDataPacket[]>(query);
+    return rows.map(this.mapToEntity);
+  }
+
   async updateActivity(userId: string, isActive: boolean): Promise<void> {
     const query = "UPDATE users SET is_active = ? WHERE id = ?";
     await this.pool.execute(query, [isActive, userId]);

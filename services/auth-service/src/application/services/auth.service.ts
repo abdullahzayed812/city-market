@@ -98,6 +98,19 @@ export class AuthService {
     await this.refreshTokenRepo.deleteByUserId(userId);
   }
 
+  async getUsers(): Promise<User[]> {
+    return this.userRepo.findAll();
+  }
+
+  async getUserById(id: string): Promise<User | null> {
+    return this.userRepo.findById(id);
+  }
+
+  async updateUserStatus(id: string, status: string): Promise<void> {
+    const isActive = status === "active";
+    await this.userRepo.updateActivity(id, isActive);
+  }
+
   private async generateTokenPair(user: User): Promise<TokenPair> {
     const payload: TokenPayload = {
       userId: user.id,
