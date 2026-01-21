@@ -5,7 +5,7 @@ import { Logger } from "@city-market/shared";
 import { AuthRequest } from "@city-market/shared";
 
 export class ProductController {
-  constructor(private productService: ProductService) { }
+  constructor(private productService: ProductService) {}
 
   create = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
@@ -78,7 +78,7 @@ export class ProductController {
 
   updateStock = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
-      await this.productService.updateStock(req.params.id, req.body.quantity);
+      await this.productService.updateStock(req.params.id, req.body.stock);
       res.json(ApiResponse.success(null, "Stock updated"));
     } catch (error) {
       next(error);

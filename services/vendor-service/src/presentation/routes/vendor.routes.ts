@@ -5,26 +5,21 @@ import { authenticate, authorize, UserRole } from "@city-market/shared";
 export const createVendorRoutes = (controller: VendorController): Router => {
   const router = Router();
 
-  router.post("/vendors", authenticate, authorize(UserRole.VENDOR, UserRole.ADMIN), controller.create);
-  router.get("/vendors/me", authenticate, authorize(UserRole.VENDOR, UserRole.ADMIN), controller.getMyVendor);
-  router.get("/vendors/open", authenticate, authorize(UserRole.VENDOR, UserRole.ADMIN), controller.getOpen);
-  router.get("/vendors/:id", authenticate, authorize(UserRole.VENDOR, UserRole.ADMIN), controller.getById);
-  router.get("/vendors", authenticate, authorize(UserRole.VENDOR, UserRole.ADMIN), controller.getAll);
-  router.patch("/vendors/:id", authenticate, authorize(UserRole.VENDOR, UserRole.ADMIN), controller.update);
-  router.patch(
-    "/vendors/:id/status",
-    authenticate,
-    authorize(UserRole.VENDOR, UserRole.ADMIN),
-    controller.updateStatus
-  );
+  router.post("/", authenticate, authorize(UserRole.VENDOR, UserRole.ADMIN), controller.create);
+  router.get("/me", authenticate, authorize(UserRole.VENDOR, UserRole.ADMIN), controller.getMyVendor);
+  router.get("/open", authenticate, authorize(UserRole.VENDOR, UserRole.ADMIN), controller.getOpen);
+  router.get("/:id", authenticate, authorize(UserRole.VENDOR, UserRole.CUSTOMER, UserRole.ADMIN), controller.getById);
+  router.get("/", authenticate, authorize(UserRole.VENDOR, UserRole.CUSTOMER, UserRole.ADMIN), controller.getAll);
+  router.patch("/:id", authenticate, authorize(UserRole.VENDOR, UserRole.ADMIN), controller.update);
+  router.patch("/:id/status", authenticate, authorize(UserRole.VENDOR, UserRole.ADMIN), controller.updateStatus);
   router.post(
-    "/vendors/:id/working-hours",
+    "/:id/working-hours",
     authenticate,
     authorize(UserRole.VENDOR, UserRole.ADMIN),
     controller.setWorkingHours
   );
   router.get(
-    "/vendors/:id/working-hours",
+    "/:id/working-hours",
     authenticate,
     authorize(UserRole.VENDOR, UserRole.ADMIN),
     controller.getWorkingHours

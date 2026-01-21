@@ -18,7 +18,7 @@ export class ProductRepository implements IProductRepository {
         stock_quantity, image_url, is_available
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    await this.pool.execute(query, [
+    await this.pool.query(query, [
       product.id,
       product.vendorId,
       product.categoryId || null,
@@ -45,7 +45,7 @@ export class ProductRepository implements IProductRepository {
       ORDER BY created_at DESC 
       LIMIT ? OFFSET ?
     `;
-    const [rows] = await this.pool.execute<RowDataPacket[]>(query, [vendorId, limit, offset]);
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [vendorId, limit, offset]);
     return rows.map((row) => this.mapToEntity(row));
   }
 
@@ -140,7 +140,7 @@ export class ProductRepository implements IProductRepository {
 
   async updateStock(id: string, quantity: number): Promise<void> {
     const query = "UPDATE products SET stock_quantity = ? WHERE id = ?";
-    await this.pool.execute(query, [quantity, id]);
+    await this.pool.query(query, [quantity, id]);
   }
 
   async decrementStock(id: string, quantity: number): Promise<void> {

@@ -48,7 +48,7 @@ export class OrderRepository implements IOrderRepository {
       ORDER BY created_at DESC 
       LIMIT ? OFFSET ?
     `;
-    const [rows] = await this.pool.execute<RowDataPacket[]>(query, [customerId, limit, offset]);
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [customerId, limit, offset]);
     return rows.map((row) => this.mapToEntity(row));
   }
 
@@ -59,7 +59,7 @@ export class OrderRepository implements IOrderRepository {
       ORDER BY created_at DESC 
       LIMIT ? OFFSET ?
     `;
-    const [rows] = await this.pool.execute<RowDataPacket[]>(query, [vendorId, limit, offset]);
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [vendorId, limit, offset]);
     return rows.map((row) => this.mapToEntity(row));
   }
 

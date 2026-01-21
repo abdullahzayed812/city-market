@@ -30,7 +30,7 @@ export class RefreshTokenRepository implements IRefreshTokenRepository {
 
   async deleteByUserId(userId: string): Promise<void> {
     const query = "DELETE FROM refresh_tokens WHERE user_id = ?";
-    await this.pool.execute(query, [userId]);
+    await this.pool.query(query, [userId]);
   }
 
   async deleteExpired(): Promise<void> {
