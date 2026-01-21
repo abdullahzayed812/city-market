@@ -1,43 +1,62 @@
 import { useTranslation } from "react-i18next";
-import { useDeliveries } from "@/hooks/useDeliveries";
-import { useEarnings } from "@/hooks/useEarnings";
-import { useCourierProfile } from "@/hooks/useCourierProfile";
-import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { deliveryService } from "@/services/api/delivery.service";
+import { Package, Truck, Clock } from "lucide-react";
 
 const Dashboard = () => {
     const { t } = useTranslation();
-    const { deliveries, isLoading: deliveriesLoading } = useDeliveries();
-    const { earnings, isLoading: earningsLoading } = useEarnings("daily");
-    const { profile } = useCourierProfile();
 
-    const activeDeliveries = deliveries.filter((d: any) => d.status !== "delivered");
-    const completedToday = deliveries.filter((d: any) => d.status === "delivered").length;
+    const { data: couriers = [] } = useQuery({
+        queryKey: ["couriers"],
+        queryFn: deliveryService.getAllCouriers,
+    });
 
-    if (deliveriesLoading || earningsLoading) {
-        return <div className="flex items-center justify-center h-full">Loading...</div>;
-    }
+    const { data: deliveries = [] } = useQuery({
+        queryKey: ["deliveries"],
+        queryFn: deliveryService.getAllDeliveries,
+    });
+
+    const { data: pendingDeliveries = [] } = useQuery({
+        queryKey: ["pending-deliveries"],
+        queryFn: deliveryService.getPendingDeliveries,
+    });
+
+    const activeCouriers = couriers.filter((c: any) => c.isOnline).length;
+    const totalDeliveriesToday = deliveries.filter((d: any) => {
+        const today = new Date().toISOString().split('T')[0];
+        return d.createdAt?.startsWith(today);
+    }).length;
 
     return (
         <div className="space-y-6">
             <h1 className="text-3xl font-bold">{t("common.dashboard")}</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="p-6 bg-card border rounded-xl shadow-sm">
-                    <p className="text-sm text-muted-foreground">{t("dashboard.active_deliveries")}</p>
-                    <p className="text-2xl font-bold mt-2">{activeDeliveries.length}</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="p-6 bg-card border rounded-xl shadow-sm flex items-center gap-4">
+                    <div className="p-3 bg-primary/10 rounded-full">
+                        <Truck className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                        <p className="text-sm text-muted-foreground">Active Couriers</p>
+                        <p className="text-2xl font-bold mt-1">{activeCouriers} / {couriers.length}</p>
+                    </div>
                 </div>
-                <div className="p-6 bg-card border rounded-xl shadow-sm">
-                    <p className="text-sm text-muted-foreground">{t("dashboard.completed_deliveries")}</p>
-                    <p className="text-2xl font-bold mt-2">{completedToday}</p>
+                <div className="p-6 bg-card border rounded-xl shadow-sm flex items-center gap-4">
+                    <div className="p-3 bg-yellow-100 rounded-full">
+                        <Clock className="w-6 h-6 text-yellow-600" />
+                    </div>
+                    <div>
+                        <p className="text-sm text-muted-foreground">Pending Deliveries</p>
+                        <p className="text-2xl font-bold mt-1">{pendingDeliveries.length}</p>
+                    </div>
                 </div>
-                <div className="p-6 bg-card border rounded-xl shadow-sm">
-                    <p className="text-sm text-muted-foreground">{t("dashboard.today_earnings")}</p>
-                    <p className="text-2xl font-bold mt-2">${earnings?.total || 0}</p>
-                </div>
-                <div className="p-6 bg-card border rounded-xl shadow-sm">
-                    <p className="text-sm text-muted-foreground">{t("common.status")}</p>
-                    <p className={cn("text-2xl font-bold mt-2", profile?.isOnline ? "text-green-600" : "text-gray-400")}>
-                        {profile?.isOnline ? t("common.online") : t("common.offline")}
-                    </p>
+                <div className="p-6 bg-card border rounded-xl shadow-sm flex items-center gap-4">
+                    <div className="p-3 bg-green-100 rounded-full">
+                        <Package className="w-6 h-6 text-green-600" />
+                    </div>
+                    <div>
+                        <p className="text-sm text-muted-foreground">Total Deliveries Today</p>
+                        <p className="text-2xl font-bold mt-1">{totalDeliveriesToday}</p>
+                    </div>
                 </div>
             </div>
         </div>

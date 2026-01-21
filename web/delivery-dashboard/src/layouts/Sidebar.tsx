@@ -3,9 +3,7 @@ import { useTranslation } from "react-i18next";
 import {
     LayoutDashboard,
     Truck,
-    History,
-    Wallet,
-    User,
+    Users,
     Settings
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -16,9 +14,7 @@ const Sidebar = () => {
     const navItems = [
         { icon: LayoutDashboard, label: t("common.dashboard"), path: "/" },
         { icon: Truck, label: t("common.deliveries"), path: "/deliveries" },
-        { icon: History, label: t("dashboard.delivery_history"), path: "/history" },
-        { icon: Wallet, label: t("common.earnings"), path: "/earnings" },
-        { icon: User, label: t("common.profile"), path: "/profile" },
+        { icon: Users, label: t("common.couriers"), path: "/couriers" },
         { icon: Settings, label: t("common.settings"), path: "/settings" },
     ];
 
@@ -26,7 +22,7 @@ const Sidebar = () => {
         <div className="flex flex-col h-full w-64 bg-card border-e">
             <div className="p-6 border-b">
                 <h1 className="text-2xl font-bold text-primary">CityMarket</h1>
-                <p className="text-xs text-muted-foreground mt-1 text-blue-600 font-semibold">Courier Dashboard</p>
+                <p className="text-xs text-muted-foreground mt-1 text-blue-600 font-semibold">Delivery Office</p>
             </div>
             <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
                 {navItems.map((item) => (

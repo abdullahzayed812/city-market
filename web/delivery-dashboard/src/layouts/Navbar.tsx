@@ -7,28 +7,16 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { Languages, Bell, User, Circle } from "lucide-react";
-import { useCourierProfile } from "@/hooks/useCourierProfile";
+import { Languages, Bell, User } from "lucide-react";
 
 const Navbar = () => {
     const { t } = useTranslation();
     const { setLanguage } = useLanguage();
-    const { profile, updateAvailability, isUpdating } = useCourierProfile();
-    const isOnline = profile?.isOnline ?? false;
 
     return (
         <header className="h-16 border-b bg-card flex items-center justify-between px-6 sticky top-0 z-10">
             <div className="flex items-center gap-4">
-                <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-2"
-                    disabled={isUpdating}
-                    onClick={() => updateAvailability(!isOnline)}
-                >
-                    <Circle className={cn("w-3 h-3 fill-current", isOnline ? "text-green-500" : "text-gray-400")} />
-                    {isOnline ? t("common.online") : t("common.offline")}
-                </Button>
+                <h2 className="text-lg font-semibold text-muted-foreground">Delivery Office</h2>
             </div>
 
             <div className="flex items-center gap-2">
@@ -58,12 +46,11 @@ const Navbar = () => {
                     <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                         <User className="w-5 h-5 text-primary" />
                     </div>
-                    <span className="font-medium hidden sm:inline-block">Courier Name</span>
+                    <span className="font-medium hidden sm:inline-block">Admin</span>
                 </Button>
             </div>
         </header>
     );
 };
 
-import { cn } from "@/lib/utils";
 export default Navbar;
