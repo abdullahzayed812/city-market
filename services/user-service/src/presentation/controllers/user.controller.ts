@@ -49,6 +49,7 @@ export class UserController {
 
   getMyAddresses = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
+      console.log(req.user!.userId);
       const customer = await this.userService.getCustomerByUserId(req.user!.userId);
       const addresses = await this.userService.getCustomerAddresses(customer.id);
       res.json(ApiResponse.success(addresses));

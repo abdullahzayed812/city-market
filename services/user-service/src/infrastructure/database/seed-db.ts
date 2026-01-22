@@ -1,4 +1,4 @@
-import { Database } from "@city-market/shared";
+import { Database, SEED_DATA } from "@city-market/shared";
 import { config } from "../../config/env";
 import { randomUUID } from "crypto";
 
@@ -13,29 +13,50 @@ const seedDb = async () => {
     const connection = db.getPool();
 
     try {
-        // We need to seed customers that match the auth users we seeded.
-        // However, we don't have access to the exact UUIDs generated in auth-service unless we hardcode them there too.
-        // For now, let's just seed some dummy customers. Ideally, we should sync or use fixed UUIDs in seed scripts.
-        // Let's assume we want to seed a customer profile for the "customer@citymarket.com" user.
-        // Since we can't easily know the ID from here without querying auth DB (which is another service),
-        // we will just insert some standalone data for testing purposes, or maybe we can hardcode UUIDs in both services' seeds.
-
-        // For this task, I'll just insert a sample customer with a random User ID, 
-        // acknowledging that it might not link to a real Auth User unless we coordinate.
-        // But wait, the schema has `user_id VARCHAR(36) UNIQUE NOT NULL`.
-
-        const customerId = randomUUID();
-        const userId = randomUUID(); // This should ideally match an auth user ID.
+        const customerId = SEED_DATA.CUSTOMERS.JOHN_DOE;
+        const userId = SEED_DATA.USERS.CUSTOMER;
 
         await connection.execute(
             "INSERT IGNORE INTO customers (id, user_id, full_name, phone) VALUES (?, ?, ?, ?)",
             [customerId, userId, "John Doe", "+201234567890"]
         );
 
-        await connection.execute(
-            "INSERT IGNORE INTO addresses (id, customer_id, label, address, latitude, longitude, is_default) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            [randomUUID(), customerId, "Home", "123 Main St, Borg El Arab", 30.9123, 29.6789, true]
-        );
+        const addresses = [
+            {
+                id: randomUUID(),
+                customer_id: customerId,
+                label: "Home",
+                address: "123 Main St, Borg El Arab",
+                latitude: 30.9123,
+                longitude: 29.6789,
+                is_default: true
+            },
+            {
+                id: randomUUID(),
+                customer_id: customerId,
+                label: "Work",
+                address: "456 Tech Park, Alexandria",
+                latitude: 31.2001,
+                longitude: 29.9187,
+                is_default: false
+            },
+            {
+                id: randomUUID(),
+                customer_id: customerId,
+                label: "Gym",
+                address: "789 Fitness Way, Smouha",
+                latitude: 31.2156,
+                longitude: 29.9497,
+                is_default: false
+            }
+        ];
+
+        for (const addr of addresses) {
+            await connection.execute(
+                "INSERT IGNORE INTO addresses (id, customer_id, label, address, latitude, longitude, is_default) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                [addr.id, addr.customer_id, addr.label, addr.address, addr.latitude, addr.longitude, addr.is_default]
+            );
+        }
 
         console.log("Database seeded successfully");
     } catch (error) {

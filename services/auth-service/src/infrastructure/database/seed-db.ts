@@ -1,7 +1,6 @@
-import { Database } from "@city-market/shared";
+import { Database, SEED_DATA } from "@city-market/shared";
 import bcrypt from "bcrypt";
 import { config } from "../../config/env";
-import { randomUUID } from "crypto";
 
 const seedDb = async () => {
     const db = Database.getInstance({
@@ -18,28 +17,28 @@ const seedDb = async () => {
 
         const users = [
             {
-                id: randomUUID(),
+                id: SEED_DATA.USERS.ADMIN,
                 email: "admin@citymarket.com",
                 password_hash: passwordHash,
                 role: "ADMIN",
                 is_active: true
             },
             {
-                id: randomUUID(),
+                id: SEED_DATA.USERS.CUSTOMER,
                 email: "customer@citymarket.com",
                 password_hash: passwordHash,
                 role: "CUSTOMER",
                 is_active: true
             },
             {
-                id: randomUUID(),
+                id: SEED_DATA.USERS.VENDOR,
                 email: "vendor@citymarket.com",
                 password_hash: passwordHash,
                 role: "VENDOR",
                 is_active: true
             },
             {
-                id: randomUUID(),
+                id: SEED_DATA.USERS.COURIER,
                 email: "courier@citymarket.com",
                 password_hash: passwordHash,
                 role: "COURIER",

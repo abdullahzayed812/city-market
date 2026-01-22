@@ -21,15 +21,17 @@ export class OrderService {
     private statusHistoryRepo: IOrderStatusHistoryRepository,
     private catalogClient: CatalogHttpClient,
     private eventBus: EventBus
-  ) { }
+  ) {}
 
-  async createOrder(dto: CreateOrderDto): Promise<OrderWithItems> {
+  async createOrder(dto: CreateOrderDto, token?: string): Promise<OrderWithItems> {
     if (dto.items.length === 0) {
       throw new ValidationError("Order must have at least one item");
     }
 
     // Fetch product information
-    const productInfos = await Promise.all(dto.items.map((item) => this.catalogClient.getProduct(item.productId)));
+    const productInfos = await Promise.all(
+      dto.items.map((item) => this.catalogClient.getProduct(item.productId, token))
+    );
 
     // Validate products
     for (let i = 0; i < productInfos.length; i++) {
@@ -108,12 +110,12 @@ export class OrderService {
     }
 
     // Emit event
-    await this.eventBus.publish({
-      id: randomUUID(),
-      type: EventType.ORDER_CREATED,
-      timestamp: new Date(),
-      payload: { orderId: order.id, customerId: order.customerId, vendorId: order.vendorId },
-    });
+    // await this.eventBus.publish({
+    //   id: randomUUID(),
+    //   type: EventType.ORDER_CREATED,
+    //   timestamp: new Date(),
+    //   payload: { orderId: order.id, customerId: order.customerId, vendorId: order.vendorId },
+    // });
 
     return { order, items };
   }

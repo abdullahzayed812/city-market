@@ -1,4 +1,4 @@
-import { Database } from "@city-market/shared";
+import { Database, SEED_DATA } from "@city-market/shared";
 import { config } from "../../config/env";
 import { randomUUID } from "crypto";
 
@@ -13,7 +13,7 @@ const seedDb = async () => {
     const connection = db.getPool();
 
     try {
-        const orderId = randomUUID(); // Should match an order ID
+        const orderId = SEED_DATA.ORDERS.ORDER_1;
 
         await connection.execute(
             "INSERT IGNORE INTO payments (id, order_id, amount, currency, status, payment_method, transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?)",

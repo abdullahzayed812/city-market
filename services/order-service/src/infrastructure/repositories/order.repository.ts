@@ -18,7 +18,7 @@ export class OrderRepository implements IOrderRepository {
         delivery_longitude, customer_notes
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    await this.pool.execute(query, [
+    await this.pool.query(query, [
       order.id,
       order.customerId,
       order.vendorId,

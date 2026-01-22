@@ -11,9 +11,11 @@ export interface ProductInfo {
 export class CatalogHttpClient {
   constructor(private baseUrl: string) {}
 
-  async getProduct(productId: string): Promise<ProductInfo | null> {
+  async getProduct(productId: string, token?: string): Promise<ProductInfo | null> {
     try {
-      const response = await axios.get(`${this.baseUrl}/products/${productId}`);
+      const response = await axios.get(`${this.baseUrl}/products/${productId}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
       if (response.data.success && response.data.data) {
         return response.data.data;
       }

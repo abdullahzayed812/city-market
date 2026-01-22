@@ -1,4 +1,4 @@
-import { Database } from "@city-market/shared";
+import { Database, SEED_DATA } from "@city-market/shared";
 import { config } from "../../config/env";
 import { randomUUID } from "crypto";
 
@@ -13,15 +13,15 @@ const seedDb = async () => {
     const connection = db.getPool();
 
     try {
-        const courierId = randomUUID();
-        const userId = randomUUID(); // Should match a courier user ID
+        const courierId = SEED_DATA.COURIERS.MIKE;
+        const userId = SEED_DATA.USERS.COURIER;
 
         await connection.execute(
             "INSERT IGNORE INTO couriers (id, user_id, full_name, phone, vehicle_type, license_plate, is_available) VALUES (?, ?, ?, ?, ?, ?, ?)",
             [courierId, userId, "Mike Courier", "+201222222222", "Motorcycle", "ABC-123", true]
         );
 
-        const orderId = randomUUID(); // Should match an order ID
+        const orderId = SEED_DATA.ORDERS.ORDER_1;
 
         await connection.execute(
             "INSERT IGNORE INTO deliveries (id, order_id, courier_id, status, pickup_address, delivery_address, pickup_latitude, pickup_longitude, delivery_latitude, delivery_longitude) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",

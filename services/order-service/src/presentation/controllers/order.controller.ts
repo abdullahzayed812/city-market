@@ -9,8 +9,9 @@ export class OrderController {
 
   create = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
+      const token = req.headers.authorization?.split(" ")[1];
       const dto = { ...req.body, customerId: req.user!.userId };
-      const order = await this.orderService.createOrder(dto);
+      const order = await this.orderService.createOrder(dto, token);
       Logger.info("Order created", { orderId: order.order.id });
       res.status(201).json(ApiResponse.success(order, "Order created"));
     } catch (error) {

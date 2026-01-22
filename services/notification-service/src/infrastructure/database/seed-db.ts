@@ -1,4 +1,4 @@
-import { Database } from "@city-market/shared";
+import { Database, SEED_DATA } from "@city-market/shared";
 import { config } from "../../config/env";
 import { randomUUID } from "crypto";
 
@@ -13,7 +13,7 @@ const seedDb = async () => {
     const connection = db.getPool();
 
     try {
-        const userId = randomUUID(); // Should match a user ID
+        const userId = SEED_DATA.USERS.CUSTOMER;
 
         await connection.execute(
             "INSERT IGNORE INTO notifications (id, user_id, type, title, message, is_read) VALUES (?, ?, ?, ?, ?, ?)",
