@@ -98,7 +98,7 @@ export class ProductRepository implements IProductRepository {
     query += " ORDER BY created_at DESC LIMIT ? OFFSET ?";
     params.push(limit, offset);
 
-    const [rows] = await this.pool.execute<RowDataPacket[]>(query, params);
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, params);
     return rows.map((row) => this.mapToEntity(row));
   }
 

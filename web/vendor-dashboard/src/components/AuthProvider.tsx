@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { authService } from "@/services/api/auth.service";
-import { vendorService } from "@/services/api/vendor.service";
 
 interface AuthContextType {
   user: any;
