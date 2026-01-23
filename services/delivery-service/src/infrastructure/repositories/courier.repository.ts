@@ -86,7 +86,7 @@ export class CourierRepository implements ICourierRepository {
 
   async updateAvailability(id: string, isAvailable: boolean): Promise<void> {
     const query = "UPDATE couriers SET is_available = ? WHERE id = ?";
-    await this.pool.execute(query, [isAvailable, id]);
+    await this.pool.query(query, [isAvailable, id]);
   }
 
   async incrementDeliveries(id: string): Promise<void> {

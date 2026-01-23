@@ -50,7 +50,7 @@ export class DeliveryRepository implements IDeliveryRepository {
       ORDER BY created_at DESC 
       LIMIT ? OFFSET ?
     `;
-    const [rows] = await this.pool.execute<RowDataPacket[]>(query, [courierId, limit, offset]);
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [courierId, limit, offset]);
     return rows.map((row) => this.mapToEntity(row));
   }
 
@@ -97,7 +97,7 @@ export class DeliveryRepository implements IDeliveryRepository {
 
     values.push(id);
     const query = `UPDATE deliveries SET ${fields.join(", ")} WHERE id = ?`;
-    await this.pool.execute(query, values);
+    await this.pool.query(query, values);
   }
 
   async assignCourier(id: string, courierId: string): Promise<void> {
