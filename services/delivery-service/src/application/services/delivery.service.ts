@@ -144,12 +144,12 @@ export class DeliveryService {
     await this.deliveryRepo.assignCourier(deliveryId, dto.courierId);
     await this.courierRepo.updateAvailability(dto.courierId, false);
 
-    await this.eventBus.publish({
-      id: randomUUID(),
-      type: EventType.COURIER_ASSIGNED,
-      timestamp: new Date(),
-      payload: { deliveryId, courierId: dto.courierId, orderId: delivery.orderId },
-    });
+    // await this.eventBus.publish({
+    //   id: randomUUID(),
+    //   type: EventType.COURIER_ASSIGNED,
+    //   timestamp: new Date(),
+    //   payload: { deliveryId, courierId: dto.courierId, orderId: delivery.orderId },
+    // });
   }
 
   async updateDeliveryStatus(deliveryId: string, dto: UpdateDeliveryStatusDto): Promise<void> {
@@ -162,12 +162,12 @@ export class DeliveryService {
 
     if (dto.status === DeliveryStatus.PICKED_UP) {
       updates.pickedUpAt = new Date();
-      await this.eventBus.publish({
-        id: randomUUID(),
-        type: EventType.ORDER_PICKED_UP,
-        timestamp: new Date(),
-        payload: { deliveryId, orderId: delivery.orderId },
-      });
+      // await this.eventBus.publish({
+      //   id: randomUUID(),
+      //   type: EventType.ORDER_PICKED_UP,
+      //   timestamp: new Date(),
+      //   payload: { deliveryId, orderId: delivery.orderId },
+      // });
     }
 
     if (dto.status === DeliveryStatus.DELIVERED) {
@@ -176,12 +176,12 @@ export class DeliveryService {
         await this.courierRepo.updateAvailability(delivery.courierId, true);
         await this.courierRepo.incrementDeliveries(delivery.courierId);
       }
-      await this.eventBus.publish({
-        id: randomUUID(),
-        type: EventType.ORDER_DELIVERED,
-        timestamp: new Date(),
-        payload: { deliveryId, orderId: delivery.orderId },
-      });
+      // await this.eventBus.publish({
+      //   id: randomUUID(),
+      //   type: EventType.ORDER_DELIVERED,
+      //   timestamp: new Date(),
+      //   payload: { deliveryId, orderId: delivery.orderId },
+      // });
     }
 
     await this.deliveryRepo.update(deliveryId, updates);

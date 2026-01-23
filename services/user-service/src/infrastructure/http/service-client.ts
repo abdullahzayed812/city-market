@@ -9,26 +9,26 @@ export class ServiceClient {
   ) {}
 
   async getAllOrders(page: number = 1, limit: number = 50) {
-    const response = await axios.get(`${this.orderServiceUrl}/orders`, {
+    const response = await axios.get(`${this.orderServiceUrl}/`, {
       params: { page, limit },
     });
     return response.data;
   }
 
   async getAllVendors(page: number = 1, limit: number = 50) {
-    const response = await axios.get(`${this.vendorServiceUrl}/vendors`, {
+    const response = await axios.get(`${this.vendorServiceUrl}/`, {
       params: { page, limit },
     });
     return response.data;
   }
 
   async updateVendorCommission(vendorId: string, rate: number) {
-    const response = await axios.patch(`${this.vendorServiceUrl}/vendors/${vendorId}/commission`, { rate });
+    const response = await axios.patch(`${this.vendorServiceUrl}/${vendorId}/commission`, { rate });
     return response.data;
   }
 
   async suspendVendor(vendorId: string) {
-    const response = await axios.patch(`${this.vendorServiceUrl}/vendors/${vendorId}/status`, { status: "SUSPENDED" });
+    const response = await axios.patch(`${this.vendorServiceUrl}/${vendorId}/status`, { status: "SUSPENDED" });
     return response.data;
   }
 

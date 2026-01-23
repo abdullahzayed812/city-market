@@ -68,7 +68,7 @@ export class DeliveryRepository implements IDeliveryRepository {
 
   async findAll(limit: number, offset: number): Promise<Delivery[]> {
     const query = "SELECT * FROM deliveries ORDER BY created_at DESC LIMIT ? OFFSET ?";
-    const [rows] = await this.pool.execute<RowDataPacket[]>(query, [limit, offset]);
+    const [rows] = await this.pool.query<RowDataPacket[]>(query, [limit, offset]);
     return rows.map((row) => this.mapToEntity(row));
   }
 

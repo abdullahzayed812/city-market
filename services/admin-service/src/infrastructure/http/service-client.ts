@@ -7,10 +7,10 @@ export class ServiceClient {
     private deliveryServiceUrl: string,
     private userServiceUrl: string,
     private authServiceUrl: string
-  ) {}
+  ) { }
 
   async getAllOrders(page: number = 1, limit: number = 50, token?: string) {
-    const response = await axios.get(`${this.orderServiceUrl}/orders`, {
+    const response = await axios.get(`${this.orderServiceUrl}/`, {
       params: { page, limit },
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
@@ -26,7 +26,7 @@ export class ServiceClient {
   }
 
   async getAllVendors(page: number = 1, limit: number = 50, token?: string) {
-    const response = await axios.get(`${this.vendorServiceUrl}/vendors`, {
+    const response = await axios.get(`${this.vendorServiceUrl}/`, {
       params: { page, limit },
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
@@ -35,7 +35,7 @@ export class ServiceClient {
 
   async updateVendorCommission(vendorId: string, rate: number, token?: string) {
     const response = await axios.patch(
-      `${this.vendorServiceUrl}/vendors/${vendorId}/commission`,
+      `${this.vendorServiceUrl}/${vendorId}/commission`,
       { rate },
       { headers: token ? { Authorization: `Bearer ${token}` } : {} }
     );
@@ -44,7 +44,7 @@ export class ServiceClient {
 
   async suspendVendor(vendorId: string, token?: string) {
     const response = await axios.patch(
-      `${this.vendorServiceUrl}/vendors/${vendorId}/status`,
+      `${this.vendorServiceUrl}/${vendorId}/status`,
       { status: "SUSPENDED" },
       { headers: token ? { Authorization: `Bearer ${token}` } : {} }
     );
@@ -83,7 +83,7 @@ export class ServiceClient {
   }
 
   async getVendorById(id: string, token?: string) {
-    const response = await axios.get(`${this.vendorServiceUrl}/vendors/${id}`, {
+    const response = await axios.get(`${this.vendorServiceUrl}/${id}`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
     return response.data;
@@ -91,7 +91,7 @@ export class ServiceClient {
 
   async updateVendorStatus(id: string, status: string, token?: string) {
     const response = await axios.patch(
-      `${this.vendorServiceUrl}/vendors/${id}/status`,
+      `${this.vendorServiceUrl}/${id}/status`,
       { status },
       { headers: token ? { Authorization: `Bearer ${token}` } : {} }
     );
@@ -99,7 +99,7 @@ export class ServiceClient {
   }
 
   async getOrderById(id: string, token?: string) {
-    const response = await axios.get(`${this.orderServiceUrl}/orders/${id}`, {
+    const response = await axios.get(`${this.orderServiceUrl}/${id}`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
     return response.data;
@@ -107,7 +107,7 @@ export class ServiceClient {
 
   async updateOrderStatus(id: string, status: string, token?: string) {
     const response = await axios.patch(
-      `${this.orderServiceUrl}/orders/${id}/status`,
+      `${this.orderServiceUrl}/${id}/status`,
       { status },
       { headers: token ? { Authorization: `Bearer ${token}` } : {} }
     );

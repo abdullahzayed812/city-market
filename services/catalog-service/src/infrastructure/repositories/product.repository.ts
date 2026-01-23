@@ -40,9 +40,13 @@ export class ProductRepository implements IProductRepository {
 
   async findByVendor(vendorId: string, limit: number, offset: number): Promise<Product[]> {
     const query = `
-      SELECT * FROM products 
-      WHERE vendor_id = ? 
-      ORDER BY created_at DESC 
+      SELECT 
+        p.*,
+        c.name AS category_name
+      FROM products p
+      LEFT JOIN categories c ON c.id = p.category_id
+      WHERE p.vendor_id = ?
+      ORDER BY p.created_at DESC
       LIMIT ? OFFSET ?
     `;
     const [rows] = await this.pool.query<RowDataPacket[]>(query, [vendorId, limit, offset]);
@@ -158,6 +162,7 @@ export class ProductRepository implements IProductRepository {
       id: row.id,
       vendorId: row.vendor_id,
       categoryId: row.category_id,
+      categoryName: row.category_name ?? null,
       name: row.name,
       description: row.description,
       price: parseFloat(row.price),
