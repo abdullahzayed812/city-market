@@ -8,6 +8,7 @@ export * from "./enums/shop-status";
 export * from "./events/event-types";
 export * from "./events/base-event";
 export * from "./events/event-bus";
+export * from "./events/rabbitmq-bus";
 
 // Utils
 export * from "./utils/response";

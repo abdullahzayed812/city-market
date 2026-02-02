@@ -7,7 +7,7 @@ import { OrderItemRepository } from "./infrastructure/repositories/order-item.re
 import { OrderStatusHistoryRepository } from "./infrastructure/repositories/order-status-history.repository";
 import { CatalogHttpClient } from "./infrastructure/http/catalog-http-client";
 import { errorHandler, Database } from "@city-market/shared";
-import { eventBus } from "@city-market/shared";
+import { eventBus, rabbitMQBus } from "@city-market/shared";
 import { config } from "./config/env";
 
 export const createApp = () => {
@@ -28,7 +28,7 @@ export const createApp = () => {
   const statusHistoryRepo = new OrderStatusHistoryRepository(db);
   const catalogClient = new CatalogHttpClient(config.catalogServiceUrl);
 
-  const orderService = new OrderService(orderRepo, orderItemRepo, statusHistoryRepo, catalogClient, eventBus);
+  const orderService = new OrderService(orderRepo, orderItemRepo, statusHistoryRepo, catalogClient, rabbitMQBus);
 
   const orderController = new OrderController(orderService);
 

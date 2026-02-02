@@ -5,7 +5,7 @@ import { Logger } from "@city-market/shared";
 import { AuthRequest } from "@city-market/shared";
 
 export class OrderController {
-  constructor(private orderService: OrderService) {}
+  constructor(private orderService: OrderService) { }
 
   create = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
@@ -63,7 +63,8 @@ export class OrderController {
 
   updateStatus = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
-      await this.orderService.updateOrderStatus(req.params.id, req.body);
+      const token = req.headers.authorization?.split(" ")[1];
+      await this.orderService.updateOrderStatus(req.params.id, req.body, token);
       res.json(ApiResponse.success(null, "Order status updated"));
     } catch (error) {
       next(error);

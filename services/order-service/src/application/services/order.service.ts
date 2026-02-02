@@ -8,7 +8,7 @@ import { OrderStatusHistory } from "../../core/entities/order-status-history.ent
 import { CreateOrderDto, UpdateOrderStatusDto, OrderWithItems } from "../../core/dto/order.dto";
 import { OrderStatus } from "@city-market/shared";
 import { ValidationError, NotFoundError } from "@city-market/shared";
-import { EventBus, EventType } from "@city-market/shared";
+import { RabbitMQBus, EventType } from "@city-market/shared";
 import { CatalogHttpClient } from "../../infrastructure/http/catalog-http-client";
 
 const DELIVERY_FEE = 15.0;
@@ -20,8 +20,8 @@ export class OrderService {
     private orderItemRepo: IOrderItemRepository,
     private statusHistoryRepo: IOrderStatusHistoryRepository,
     private catalogClient: CatalogHttpClient,
-    private eventBus: EventBus
-  ) {}
+    private eventBus: RabbitMQBus
+  ) { }
 
   async createOrder(dto: CreateOrderDto, token?: string): Promise<OrderWithItems> {
     if (dto.items.length === 0) {
@@ -145,7 +145,7 @@ export class OrderService {
     return this.orderRepo.findAll(limit, offset);
   }
 
-  async updateOrderStatus(orderId: string, dto: UpdateOrderStatusDto): Promise<void> {
+  async updateOrderStatus(orderId: string, dto: UpdateOrderStatusDto, token?: string): Promise<void> {
     const { order } = await this.getOrderById(orderId);
 
     // Validate status transition
@@ -157,15 +157,15 @@ export class OrderService {
     await this.recordStatusChange(orderId, dto.status, dto.notes);
 
     // Emit events
-    // const eventType = this.getEventTypeForStatus(dto.status);
-    // if (eventType) {
-    //   await this.eventBus.publish({
-    //     id: randomUUID(),
-    //     type: eventType,
-    //     timestamp: new Date(),
-    //     payload: { orderId, status: dto.status },
-    //   });
-    // }
+    const eventType = this.getEventTypeForStatus(dto.status);
+    if (eventType) {
+      await this.eventBus.publish({
+        id: randomUUID(),
+        type: eventType,
+        timestamp: new Date(),
+        payload: { orderId, status: dto.status, token },
+      });
+    }
   }
 
   async cancelOrder(orderId: string, reason: string): Promise<void> {

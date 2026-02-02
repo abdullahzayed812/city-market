@@ -5,7 +5,10 @@ import { DeliveryService } from "./application/services/delivery.service";
 import { CourierRepository } from "./infrastructure/repositories/courier.repository";
 import { DeliveryRepository } from "./infrastructure/repositories/delivery.repository";
 import { errorHandler, Database } from "@city-market/shared";
-import { eventBus } from "@city-market/shared";
+import { eventBus, EventType, rabbitMQBus } from "@city-market/shared";
+import { OrderReadyConsumer } from "./application/events/order-ready.consumer";
+import { OrderHttpClient } from "./infrastructure/http/order-http-client";
+import { VendorHttpClient } from "./infrastructure/http/vendor-http-client";
 import { config } from "./config/env";
 
 export const createApp = () => {
@@ -24,9 +27,23 @@ export const createApp = () => {
   const courierRepo = new CourierRepository(db);
   const deliveryRepo = new DeliveryRepository(db);
 
-  const deliveryService = new DeliveryService(courierRepo, deliveryRepo, eventBus);
+  const orderClient = new OrderHttpClient(config.orderServiceUrl);
+  const vendorClient = new VendorHttpClient(config.vendorServiceUrl);
+
+  const deliveryService = new DeliveryService(
+    courierRepo,
+    deliveryRepo,
+    eventBus,
+    orderClient,
+    vendorClient
+  );
 
   const deliveryController = new DeliveryController(deliveryService);
+
+  // Register Event Consumers
+  // Register Event Consumers
+  const orderReadyConsumer = new OrderReadyConsumer(deliveryService);
+  rabbitMQBus.subscribe(EventType.ORDER_READY, "delivery_service_order_ready", (event) => orderReadyConsumer.handle(event));
 
   app.use("/", createDeliveryRoutes(deliveryController));
 

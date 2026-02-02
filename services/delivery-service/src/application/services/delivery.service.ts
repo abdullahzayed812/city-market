@@ -8,12 +8,16 @@ import { CreateDeliveryDto, AssignCourierDto, UpdateDeliveryStatusDto } from "..
 import { DeliveryStatus } from "@city-market/shared";
 import { ValidationError, NotFoundError } from "@city-market/shared";
 import { EventBus, EventType } from "@city-market/shared";
+import { OrderHttpClient } from "../../infrastructure/http/order-http-client";
+import { VendorHttpClient } from "../../infrastructure/http/vendor-http-client";
 
 export class DeliveryService {
   constructor(
     private courierRepo: ICourierRepository,
     private deliveryRepo: IDeliveryRepository,
-    private eventBus: EventBus
+    private eventBus: EventBus,
+    private orderClient: OrderHttpClient,
+    private vendorClient: VendorHttpClient
   ) {}
 
   // Courier management
@@ -92,6 +96,39 @@ export class DeliveryService {
       pickupLongitude: dto.pickupLongitude,
       deliveryLatitude: dto.deliveryLatitude,
       deliveryLongitude: dto.deliveryLongitude,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    return this.deliveryRepo.create(delivery);
+  }
+
+  async createDeliveryFromOrder(orderId: string, token?: string): Promise<Delivery> {
+    const { order } = await this.orderClient.getOrder(orderId, token);
+    if (!order) {
+      throw new NotFoundError(`Order ${orderId} not found`);
+    }
+
+    const vendor = await this.vendorClient.getVendor(order.vendorId, token);
+    if (!vendor) {
+      throw new NotFoundError(`Vendor ${order.vendorId} not found`);
+    }
+
+    // Determine pickup address (assuming vendor address)
+    // Adjust based on actual vendor object structure, here assuming vendor.address or vendor.businessAddress
+    // If vendor object has address string directly or within an object
+    const pickupAddress = vendor.address || vendor.businessAddress || "Unknown Vendor Address";
+
+    const delivery: Delivery = {
+      id: randomUUID(),
+      orderId,
+      status: DeliveryStatus.PENDING,
+      pickupAddress: pickupAddress,
+      deliveryAddress: order.deliveryAddress,
+      pickupLatitude: vendor.latitude || null,
+      pickupLongitude: vendor.longitude || null,
+      deliveryLatitude: order.deliveryLatitude || null,
+      deliveryLongitude: order.deliveryLongitude || null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

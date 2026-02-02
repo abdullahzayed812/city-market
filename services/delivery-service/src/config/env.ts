@@ -5,4 +5,6 @@ export const config = {
   dbUser: process.env.DB_USER || "abdo",
   dbPassword: process.env.DB_PASSWORD || "password",
   dbName: process.env.DB_NAME || "delivery_db",
+  orderServiceUrl: process.env.ORDER_SERVICE_URL || "http://localhost:3005",
+  vendorServiceUrl: process.env.VENDOR_SERVICE_URL || "http://localhost:3003",
 };

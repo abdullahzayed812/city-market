@@ -1,197 +1,150 @@
 import { useTranslation } from "react-i18next";
 import { useOrders } from "@/hooks/useOrders";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, Eye, CheckCircle, XCircle, Truck, Package, ChefHat } from "lucide-react";
 import { OrderStatus, type Order } from "@/types/order";
 
 const Orders = () => {
-    const { t } = useTranslation();
-    const { orders, isLoading, updateStatus, cancelOrder } = useOrders();
+  const { t } = useTranslation();
+  const { orders, isLoading, updateStatus, cancelOrder } = useOrders();
 
-    if (isLoading) {
-        return <div className="flex items-center justify-center h-full">Loading...</div>;
+  if (isLoading) {
+    return <div className="flex items-center justify-center h-full">Loading...</div>;
+  }
+
+  const getStatusBadgeVariant = (status: OrderStatus) => {
+    switch (status) {
+      case OrderStatus.DELIVERED:
+        return "default"; // or success color if available
+      case OrderStatus.CANCELLED:
+        return "destructive";
+      case OrderStatus.CONFIRMED:
+      case OrderStatus.PREPARING:
+      case OrderStatus.READY:
+      case OrderStatus.ON_THE_WAY:
+        return "secondary"; // active states
+      default:
+        return "outline";
     }
+  };
 
-    const getStatusBadgeVariant = (status: OrderStatus) => {
-        switch (status) {
-            case OrderStatus.DELIVERED:
-                return "default"; // or success color if available
-            case OrderStatus.CANCELLED:
-                return "destructive";
-            case OrderStatus.CONFIRMED:
-            case OrderStatus.PREPARING:
-            case OrderStatus.READY:
-            case OrderStatus.ON_THE_WAY:
-                return "secondary"; // active states
-            default:
-                return "outline";
-        }
-    };
+  const formatStatus = (status: string) => {
+    return status
+      .split("_")
+      .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
+      .join(" ");
+  };
 
-    const formatStatus = (status: string) => {
-        return status.split('_').map(word => word.charAt(0) + word.slice(1).toLowerCase()).join(' ');
-    };
-
-    return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">{t("common.orders")}</h1>
-                    <p className="text-muted-foreground">
-                        Manage and track your customer orders.
-                    </p>
-                </div>
-            </div>
-
-            <div className="border rounded-lg bg-card">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Order ID</TableHead>
-                            <TableHead>Date</TableHead>
-                            <TableHead>Customer</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead className="text-right">Amount</TableHead>
-                            <TableHead className="w-[100px]"></TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {orders.map((order: Order) => (
-                            <TableRow key={order.id}>
-                                <TableCell className="font-medium">#{order.id.slice(0, 8)}</TableCell>
-                                <TableCell>{new Date(order.createdAt).toLocaleDateString()}</TableCell>
-                                <TableCell>{order.customerName || "Customer"}</TableCell>
-                                <TableCell>
-                                    <Badge variant={getStatusBadgeVariant(order.status)}>
-                                        {formatStatus(order.status)}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell className="text-right">${order.totalAmount}</TableCell>
-                                <TableCell>
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" size="icon">
-                                                <MoreHorizontal className="h-4 w-4" />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                            <DropdownMenuItem className="gap-2">
-                                                <Eye className="h-4 w-4" /> View Details
-                                            </DropdownMenuItem>
-
-                                            {/* Status Transitions */}
-                                            {order.status === OrderStatus.CREATED && (
-                                                <>
-                                                    <DropdownMenuItem
-                                                        className="gap-2 text-green-600"
-                                                        onClick={() => updateStatus({ id: order.id, status: OrderStatus.CONFIRMED })}
-                                                    >
-                                                        <CheckCircle className="h-4 w-4" /> Confirm Order
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem
-                                                        className="gap-2 text-destructive"
-                                                        onClick={() => cancelOrder(order.id)}
-                                                    >
-                                                        <XCircle className="h-4 w-4" /> Cancel Order
-                                                    </DropdownMenuItem>
-                                                </>
-                                            )}
-
-                                            {order.status === OrderStatus.CONFIRMED && (
-                                                <>
-                                                    <DropdownMenuItem
-                                                        className="gap-2 text-blue-600"
-                                                        onClick={() => updateStatus({ id: order.id, status: OrderStatus.PREPARING })}
-                                                    >
-                                                        <ChefHat className="h-4 w-4" /> Start Preparing
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem
-                                                        className="gap-2 text-destructive"
-                                                        onClick={() => cancelOrder(order.id)}
-                                                    >
-                                                        <XCircle className="h-4 w-4" /> Cancel Order
-                                                    </DropdownMenuItem>
-                                                </>
-                                            )}
-
-                                            {order.status === OrderStatus.PREPARING && (
-                                                <>
-                                                    <DropdownMenuItem
-                                                        className="gap-2 text-green-600"
-                                                        onClick={() => updateStatus({ id: order.id, status: OrderStatus.READY })}
-                                                    >
-                                                        <Package className="h-4 w-4" /> Mark as Ready
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem
-                                                        className="gap-2 text-destructive"
-                                                        onClick={() => cancelOrder(order.id)}
-                                                    >
-                                                        <XCircle className="h-4 w-4" /> Cancel Order
-                                                    </DropdownMenuItem>
-                                                </>
-                                            )}
-
-                                            {order.status === OrderStatus.READY && (
-                                                <>
-                                                    {/* Assuming Vendor Self-Delivery or just handoff. If courier, maybe no action needed? 
-                                                        For now providing option to move to ON_THE_WAY if applicable. 
-                                                        The backend allows READY -> ON_THE_WAY. */}
-                                                    <DropdownMenuItem
-                                                        className="gap-2 text-blue-600"
-                                                        onClick={() => updateStatus({ id: order.id, status: OrderStatus.ON_THE_WAY })}
-                                                    >
-                                                        <Truck className="h-4 w-4" /> Mark On The Way
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem
-                                                        className="gap-2 text-destructive"
-                                                        onClick={() => cancelOrder(order.id)}
-                                                    >
-                                                        <XCircle className="h-4 w-4" /> Cancel Order
-                                                    </DropdownMenuItem>
-                                                </>
-                                            )}
-
-                                            {order.status === OrderStatus.ON_THE_WAY && (
-                                                <DropdownMenuItem
-                                                    className="gap-2 text-green-600"
-                                                    onClick={() => updateStatus({ id: order.id, status: OrderStatus.DELIVERED })}
-                                                >
-                                                    <CheckCircle className="h-4 w-4" /> Mark Delivered
-                                                </DropdownMenuItem>
-                                            )}
-
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                        {orders.length === 0 && (
-                            <TableRow>
-                                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                                    No orders found.
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-            </div>
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">{t("common.orders")}</h1>
+          <p className="text-muted-foreground">Manage and track your customer orders.</p>
         </div>
-    );
+      </div>
+
+      <div className="border rounded-lg bg-card">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Order ID</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead>Customer</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-right">Amount</TableHead>
+              <TableHead className="w-[100px]"></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {orders.map((order: Order) => (
+              <TableRow key={order.id}>
+                <TableCell className="font-medium">#{order.id.slice(0, 8)}</TableCell>
+                <TableCell>{new Date(order.createdAt).toLocaleDateString()}</TableCell>
+                <TableCell>{order.customerName || "Customer"}</TableCell>
+                <TableCell>
+                  <Badge variant={getStatusBadgeVariant(order.status)}>{formatStatus(order.status)}</Badge>
+                </TableCell>
+                <TableCell className="text-right">${order.totalAmount}</TableCell>
+                <TableCell>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem className="gap-2">
+                        <Eye className="h-4 w-4" /> View Details
+                      </DropdownMenuItem>
+
+                      {/* Status Transitions */}
+                      {order.status === OrderStatus.CREATED && (
+                        <>
+                          <DropdownMenuItem
+                            className="gap-2 text-green-600"
+                            onClick={() => updateStatus({ id: order.id, status: OrderStatus.CONFIRMED })}
+                          >
+                            <CheckCircle className="h-4 w-4" /> Confirm Order
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="gap-2 text-destructive" onClick={() => cancelOrder(order.id)}>
+                            <XCircle className="h-4 w-4" /> Cancel Order
+                          </DropdownMenuItem>
+                        </>
+                      )}
+
+                      {order.status === OrderStatus.CONFIRMED && (
+                        <>
+                          <DropdownMenuItem
+                            className="gap-2 text-blue-600"
+                            onClick={() => updateStatus({ id: order.id, status: OrderStatus.PREPARING })}
+                          >
+                            <ChefHat className="h-4 w-4" /> Start Preparing
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="gap-2 text-destructive" onClick={() => cancelOrder(order.id)}>
+                            <XCircle className="h-4 w-4" /> Cancel Order
+                          </DropdownMenuItem>
+                        </>
+                      )}
+
+                      {order.status === OrderStatus.PREPARING && (
+                        <>
+                          <DropdownMenuItem
+                            className="gap-2 text-green-600"
+                            onClick={() => updateStatus({ id: order.id, status: OrderStatus.READY })}
+                          >
+                            <Package className="h-4 w-4" /> Mark as Ready
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="gap-2 text-destructive" onClick={() => cancelOrder(order.id)}>
+                            <XCircle className="h-4 w-4" /> Cancel Order
+                          </DropdownMenuItem>
+                        </>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            ))}
+            {orders.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  No orders found.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  );
 };
 
 export default Orders;

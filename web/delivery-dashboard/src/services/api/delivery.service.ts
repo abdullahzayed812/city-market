@@ -33,8 +33,8 @@ export const deliveryService = {
     return response.data?.data;
   },
 
-  updateDeliveryStatus: async (id: string, status: string) => {
-    const response = await apiClient.patch(`/delivery/deliveries/${id}/status`, { status });
-    return response.data?.data;
-  },
+  // updateDeliveryStatus: async (id: string, status: string) => {
+  //   const response = await apiClient.patch(`/delivery/deliveries/${id}/status`, { status });
+  //   return response.data?.data;
+  // },
 };

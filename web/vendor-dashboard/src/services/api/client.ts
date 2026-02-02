@@ -28,6 +28,7 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401) {
       // Handle unauthorized error (e.g., redirect to login)
       localStorage.removeItem("vendor_token");
+      localStorage.removeItem("vendor_user");
       window.location.href = "/login";
     }
     return Promise.reject(error);

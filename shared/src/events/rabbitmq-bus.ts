@@ -1,0 +1,107 @@
+import amqp, { Channel, ConsumeMessage } from "amqplib";
+import { Logger } from "../utils/logger";
+import { BaseEvent } from "./base-event";
+import { EventType } from "./event-types";
+
+type EventHandler = (event: BaseEvent) => Promise<void>;
+
+export class RabbitMQBus {
+  private connection: any = null;
+  private channel: Channel | null = null;
+  private isConnected = false;
+  private handlers: Map<string, EventHandler[]> = new Map();
+
+  constructor(private url: string = "amqp://localhost") {}
+
+  async connect(): Promise<void> {
+    if (this.isConnected) return;
+
+    try {
+      this.connection = await amqp.connect(this.url);
+      this.channel = await this.connection.createChannel();
+      this.isConnected = true;
+      Logger.info("Connected to RabbitMQ");
+
+      this.connection?.on("error", (err: any) => {
+        Logger.error("RabbitMQ connection error", err);
+        this.isConnected = false;
+        this.reconnect();
+      });
+
+      this.connection?.on("close", () => {
+        Logger.warn("RabbitMQ connection closed");
+        this.isConnected = false;
+        this.reconnect();
+      });
+    } catch (error) {
+      Logger.error("Failed to connect to RabbitMQ", error);
+      this.reconnect();
+    }
+  }
+
+  private async reconnect(): Promise<void> {
+    setTimeout(() => {
+      Logger.info("Reconnecting to RabbitMQ...");
+      this.connect();
+    }, 5000);
+  }
+
+  async publish(event: BaseEvent): Promise<void> {
+    if (!this.channel) {
+      Logger.error("RabbitMQ channel not available, cannot publish");
+      return;
+    }
+
+    try {
+      const exchange = "citymarket_events";
+      await this.channel.assertExchange(exchange, "topic", { durable: true });
+      this.channel.publish(exchange, event.type, Buffer.from(JSON.stringify(event)));
+      Logger.info(`Published event ${event.type}`);
+    } catch (error) {
+      Logger.error(`Failed to publish event ${event.type}`, error);
+    }
+  }
+
+  async subscribe(eventType: EventType, queueName: string, handler: EventHandler): Promise<void> {
+    if (!this.channel) {
+      await this.connect();
+    }
+
+    if (!this.channel) {
+      Logger.error("RabbitMQ channel not available for subscription");
+      return;
+    }
+
+    const exchange = "citymarket_events";
+    await this.channel.assertExchange(exchange, "topic", { durable: true });
+
+    await this.channel.assertQueue(queueName, { durable: true });
+    await this.channel.bindQueue(queueName, exchange, eventType);
+
+    if (!this.handlers.has(queueName)) {
+      this.handlers.set(queueName, []);
+
+      await this.channel.consume(queueName, async (msg: ConsumeMessage | null) => {
+        if (msg) {
+          try {
+            const content = JSON.parse(msg.content.toString());
+            const handlers = this.handlers.get(queueName) || [];
+            for (const h of handlers) {
+              await h(content);
+            }
+            this.channel?.ack(msg);
+          } catch (error) {
+            Logger.error(`Error processing message from ${queueName}`, error);
+            // Decide whether to nack or just log. Acking for now to avoid loops if persistent error.
+            this.channel?.ack(msg);
+          }
+        }
+      });
+    }
+
+    this.handlers.get(queueName)!.push(handler);
+    Logger.info(`Subscribed to ${eventType} on queue ${queueName}`);
+  }
+}
+
+export const rabbitMQBus = new RabbitMQBus();

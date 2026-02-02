@@ -36,6 +36,14 @@ const Deliveries = () => {
     },
   });
 
+  // const updateStatusMutation = useMutation({
+  //   mutationFn: ({ id, status }: { id: string; status: string }) =>
+  //     deliveryService.updateDeliveryStatus(id, status),
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({ queryKey: ["deliveries"] });
+  //   },
+  // });
+
   const handleAssign = () => {
     if (assigningDeliveryId && selectedCourier) {
       assignMutation.mutate({ deliveryId: assigningDeliveryId, courierId: selectedCourier });
@@ -158,6 +166,39 @@ const Deliveries = () => {
                         </DialogContent>
                       </Dialog>
                     )}
+
+                    {/* {delivery.status.toLowerCase() === "assigned" && (
+                      <Button
+                        className="w-full mt-4"
+                        variant="outline"
+                        onClick={() => updateStatusMutation.mutate({ id: delivery.id, status: "PICKED_UP" })}
+                        disabled={updateStatusMutation.isPending}
+                      >
+                        Mark as Picked Up
+                      </Button>
+                    )}
+
+                    {delivery.status.toLowerCase() === "picked_up" && (
+                      <Button
+                        className="w-full mt-4"
+                        variant="outline"
+                        onClick={() => updateStatusMutation.mutate({ id: delivery.id, status: "ON_THE_WAY" })}
+                        disabled={updateStatusMutation.isPending}
+                      >
+                        Mark as On The Way
+                      </Button>
+                    )}
+
+                    {delivery.status.toLowerCase() === "on_the_way" && (
+                      <Button
+                        className="w-full mt-4"
+                        variant="default"
+                        onClick={() => updateStatusMutation.mutate({ id: delivery.id, status: "DELIVERED" })}
+                        disabled={updateStatusMutation.isPending}
+                      >
+                        Mark as Delivered
+                      </Button>
+                    )} */}
                   </div>
                 </div>
               </CardContent>
