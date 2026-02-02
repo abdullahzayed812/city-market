@@ -157,15 +157,15 @@ export class OrderService {
     await this.recordStatusChange(orderId, dto.status, dto.notes);
 
     // Emit events
-    const eventType = this.getEventTypeForStatus(dto.status);
-    if (eventType) {
-      await this.eventBus.publish({
-        id: randomUUID(),
-        type: eventType,
-        timestamp: new Date(),
-        payload: { orderId, status: dto.status },
-      });
-    }
+    // const eventType = this.getEventTypeForStatus(dto.status);
+    // if (eventType) {
+    //   await this.eventBus.publish({
+    //     id: randomUUID(),
+    //     type: eventType,
+    //     timestamp: new Date(),
+    //     payload: { orderId, status: dto.status },
+    //   });
+    // }
   }
 
   async cancelOrder(orderId: string, reason: string): Promise<void> {
@@ -182,12 +182,12 @@ export class OrderService {
 
     await this.recordStatusChange(orderId, OrderStatus.CANCELLED, reason);
 
-    await this.eventBus.publish({
-      id: randomUUID(),
-      type: EventType.ORDER_CANCELLED,
-      timestamp: new Date(),
-      payload: { orderId, reason },
-    });
+    // await this.eventBus.publish({
+    //   id: randomUUID(),
+    //   type: EventType.ORDER_CANCELLED,
+    //   timestamp: new Date(),
+    //   payload: { orderId, reason },
+    // });
   }
 
   private async recordStatusChange(orderId: string, status: OrderStatus, notes?: string): Promise<void> {

@@ -16,7 +16,8 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Eye, CheckCircle, XCircle, Truck } from "lucide-react";
+import { MoreHorizontal, Eye, CheckCircle, XCircle, Truck, Package, ChefHat } from "lucide-react";
+import { OrderStatus, type Order } from "@/types/order";
 
 const Orders = () => {
     const { t } = useTranslation();
@@ -25,6 +26,26 @@ const Orders = () => {
     if (isLoading) {
         return <div className="flex items-center justify-center h-full">Loading...</div>;
     }
+
+    const getStatusBadgeVariant = (status: OrderStatus) => {
+        switch (status) {
+            case OrderStatus.DELIVERED:
+                return "default"; // or success color if available
+            case OrderStatus.CANCELLED:
+                return "destructive";
+            case OrderStatus.CONFIRMED:
+            case OrderStatus.PREPARING:
+            case OrderStatus.READY:
+            case OrderStatus.ON_THE_WAY:
+                return "secondary"; // active states
+            default:
+                return "outline";
+        }
+    };
+
+    const formatStatus = (status: string) => {
+        return status.split('_').map(word => word.charAt(0) + word.slice(1).toLowerCase()).join(' ');
+    };
 
     return (
         <div className="space-y-6">
@@ -50,18 +71,14 @@ const Orders = () => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {orders.map((order: any) => (
+                        {orders.map((order: Order) => (
                             <TableRow key={order.id}>
                                 <TableCell className="font-medium">#{order.id.slice(0, 8)}</TableCell>
                                 <TableCell>{new Date(order.createdAt).toLocaleDateString()}</TableCell>
                                 <TableCell>{order.customerName || "Customer"}</TableCell>
                                 <TableCell>
-                                    <Badge variant={
-                                        order.status === "completed" ? "default" :
-                                            order.status === "cancelled" ? "destructive" :
-                                                "secondary"
-                                    }>
-                                        {order.status}
+                                    <Badge variant={getStatusBadgeVariant(order.status)}>
+                                        {formatStatus(order.status)}
                                     </Badge>
                                 </TableCell>
                                 <TableCell className="text-right">${order.totalAmount}</TableCell>
@@ -76,13 +93,15 @@ const Orders = () => {
                                             <DropdownMenuItem className="gap-2">
                                                 <Eye className="h-4 w-4" /> View Details
                                             </DropdownMenuItem>
-                                            {order.status === "pending" && (
+
+                                            {/* Status Transitions */}
+                                            {order.status === OrderStatus.CREATED && (
                                                 <>
                                                     <DropdownMenuItem
                                                         className="gap-2 text-green-600"
-                                                        onClick={() => updateStatus({ id: order.id, status: "processing" })}
+                                                        onClick={() => updateStatus({ id: order.id, status: OrderStatus.CONFIRMED })}
                                                     >
-                                                        <CheckCircle className="h-4 w-4" /> Accept Order
+                                                        <CheckCircle className="h-4 w-4" /> Confirm Order
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem
                                                         className="gap-2 text-destructive"
@@ -92,14 +111,70 @@ const Orders = () => {
                                                     </DropdownMenuItem>
                                                 </>
                                             )}
-                                            {order.status === "processing" && (
+
+                                            {order.status === OrderStatus.CONFIRMED && (
+                                                <>
+                                                    <DropdownMenuItem
+                                                        className="gap-2 text-blue-600"
+                                                        onClick={() => updateStatus({ id: order.id, status: OrderStatus.PREPARING })}
+                                                    >
+                                                        <ChefHat className="h-4 w-4" /> Start Preparing
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem
+                                                        className="gap-2 text-destructive"
+                                                        onClick={() => cancelOrder(order.id)}
+                                                    >
+                                                        <XCircle className="h-4 w-4" /> Cancel Order
+                                                    </DropdownMenuItem>
+                                                </>
+                                            )}
+
+                                            {order.status === OrderStatus.PREPARING && (
+                                                <>
+                                                    <DropdownMenuItem
+                                                        className="gap-2 text-green-600"
+                                                        onClick={() => updateStatus({ id: order.id, status: OrderStatus.READY })}
+                                                    >
+                                                        <Package className="h-4 w-4" /> Mark as Ready
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem
+                                                        className="gap-2 text-destructive"
+                                                        onClick={() => cancelOrder(order.id)}
+                                                    >
+                                                        <XCircle className="h-4 w-4" /> Cancel Order
+                                                    </DropdownMenuItem>
+                                                </>
+                                            )}
+
+                                            {order.status === OrderStatus.READY && (
+                                                <>
+                                                    {/* Assuming Vendor Self-Delivery or just handoff. If courier, maybe no action needed? 
+                                                        For now providing option to move to ON_THE_WAY if applicable. 
+                                                        The backend allows READY -> ON_THE_WAY. */}
+                                                    <DropdownMenuItem
+                                                        className="gap-2 text-blue-600"
+                                                        onClick={() => updateStatus({ id: order.id, status: OrderStatus.ON_THE_WAY })}
+                                                    >
+                                                        <Truck className="h-4 w-4" /> Mark On The Way
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem
+                                                        className="gap-2 text-destructive"
+                                                        onClick={() => cancelOrder(order.id)}
+                                                    >
+                                                        <XCircle className="h-4 w-4" /> Cancel Order
+                                                    </DropdownMenuItem>
+                                                </>
+                                            )}
+
+                                            {order.status === OrderStatus.ON_THE_WAY && (
                                                 <DropdownMenuItem
-                                                    className="gap-2 text-blue-600"
-                                                    onClick={() => updateStatus({ id: order.id, status: "shipped" })}
+                                                    className="gap-2 text-green-600"
+                                                    onClick={() => updateStatus({ id: order.id, status: OrderStatus.DELIVERED })}
                                                 >
-                                                    <Truck className="h-4 w-4" /> Mark as Shipped
+                                                    <CheckCircle className="h-4 w-4" /> Mark Delivered
                                                 </DropdownMenuItem>
                                             )}
+
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </TableCell>

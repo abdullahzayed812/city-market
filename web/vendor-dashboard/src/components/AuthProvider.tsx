@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { authService } from "@/services/api/auth.service";
+import { vendorService } from "@/services/api/vendor.service";
 
 interface AuthContextType {
   user: any;
@@ -21,9 +22,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const initAuth = async () => {
       const savedUser = localStorage.getItem("vendor_user");
-      if (savedUser) {
+      const savedToken = localStorage.getItem("vendor_token");
+
+      if (savedUser && savedToken) {
         setUser(JSON.parse(savedUser));
-        setVendor(JSON.parse(savedUser));
+        try {
+          // Fetch the vendor profile to ensure we have the correct vendor.id
+          const vendorProfile = await vendorService.getMyProfile();
+          setVendor(vendorProfile);
+        } catch (error) {
+          console.error("Failed to fetch vendor profile:", error);
+          // If vendor profile fetch fails, we might want to logout or partial state?
+          // For now, let's keep user logged in but vendor might be null/stale
+        }
       }
       setIsLoading(false);
     };
@@ -38,16 +49,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (data.refreshToken) {
       localStorage.setItem("vendor_refresh_token", data.refreshToken);
     }
+    setToken(data.accessToken);
+
     if (data.user) {
       localStorage.setItem("vendor_user", JSON.stringify(data.user));
       setUser(data.user);
-      setVendor(data.user);
+
+      // Fetch vendor profile immediately after login
+      try {
+        const vendorProfile = await vendorService.getMyProfile();
+        setVendor(vendorProfile);
+      } catch (error) {
+        console.error("Failed to fetch vendor profile:", error);
+      }
     }
-    setToken(data.accessToken);
   };
 
   const logout = () => {
     localStorage.removeItem("vendor_token");
+    localStorage.removeItem("vendor_refresh_token");
+    localStorage.removeItem("vendor_user");
     setToken(null);
     setUser(null);
     setVendor(null);
