@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSocket } from "@/contexts/SocketContext";
 import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { adminApi } from "@/services/api/admin-api";
@@ -37,6 +38,31 @@ const OrdersManagement: React.FC = () => {
   const queryClient = useQueryClient();
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { socket } = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleOrderUpdate = () => {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+    };
+
+    const events = [
+      "ORDER_CREATED",
+      "ORDER_CONFIRMED",
+      "ORDER_CANCELLED",
+      "ORDER_READY",
+      "ORDER_PICKED_UP",
+      "ORDER_ON_THE_WAY",
+      "ORDER_DELIVERED",
+    ];
+
+    events.forEach((event) => socket.on(event, handleOrderUpdate));
+
+    return () => {
+      events.forEach((event) => socket.off(event, handleOrderUpdate));
+    };
+  }, [socket, queryClient]);
 
   const { data: orders, isLoading } = useQuery<Order[]>({
     queryKey: ["orders"],
@@ -163,8 +189,8 @@ const OrdersManagement: React.FC = () => {
                         selectedOrder.status === "DELIVERED"
                           ? "default"
                           : selectedOrder.status === "CREATED"
-                          ? "outline"
-                          : "secondary"
+                            ? "outline"
+                            : "secondary"
                       }
                     >
                       {selectedOrder.status}

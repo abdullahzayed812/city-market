@@ -110,12 +110,12 @@ export class OrderService {
     }
 
     // Emit event
-    // await this.eventBus.publish({
-    //   id: randomUUID(),
-    //   type: EventType.ORDER_CREATED,
-    //   timestamp: new Date(),
-    //   payload: { orderId: order.id, customerId: order.customerId, vendorId: order.vendorId },
-    // });
+    await this.eventBus.publish({
+      id: randomUUID(),
+      type: EventType.ORDER_CREATED,
+      timestamp: new Date(),
+      payload: { orderId: order.id, customerId: order.customerId, vendorId: order.vendorId },
+    });
 
     return { order, items };
   }
@@ -148,6 +148,11 @@ export class OrderService {
   async updateOrderStatus(orderId: string, dto: UpdateOrderStatusDto, token?: string): Promise<void> {
     const { order } = await this.getOrderById(orderId);
 
+    // Idempotency check
+    if (order.status === dto.status) {
+      return;
+    }
+
     // Validate status transition
     if (!this.isValidStatusTransition(order.status, dto.status)) {
       throw new ValidationError(`Cannot transition from ${order.status} to ${dto.status}`);
@@ -163,7 +168,13 @@ export class OrderService {
         id: randomUUID(),
         type: eventType,
         timestamp: new Date(),
-        payload: { orderId, status: dto.status, token },
+        payload: {
+          orderId,
+          status: dto.status,
+          customerId: order.customerId,
+          vendorId: order.vendorId,
+          token
+        },
       });
     }
   }
@@ -182,12 +193,17 @@ export class OrderService {
 
     await this.recordStatusChange(orderId, OrderStatus.CANCELLED, reason);
 
-    // await this.eventBus.publish({
-    //   id: randomUUID(),
-    //   type: EventType.ORDER_CANCELLED,
-    //   timestamp: new Date(),
-    //   payload: { orderId, reason },
-    // });
+    await this.eventBus.publish({
+      id: randomUUID(),
+      type: EventType.ORDER_CANCELLED,
+      timestamp: new Date(),
+      payload: {
+        orderId,
+        reason,
+        customerId: order.customerId,
+        vendorId: order.vendorId
+      },
+    });
   }
 
   private async recordStatusChange(orderId: string, status: OrderStatus, notes?: string): Promise<void> {
@@ -220,6 +236,8 @@ export class OrderService {
     const mapping: Partial<Record<OrderStatus, EventType>> = {
       [OrderStatus.CONFIRMED]: EventType.ORDER_CONFIRMED,
       [OrderStatus.READY]: EventType.ORDER_READY,
+      [OrderStatus.PICKED_UP]: EventType.ORDER_PICKED_UP,
+      [OrderStatus.ON_THE_WAY]: EventType.ORDER_ON_THE_WAY,
       [OrderStatus.DELIVERED]: EventType.ORDER_DELIVERED,
     };
     return mapping[status] || null;

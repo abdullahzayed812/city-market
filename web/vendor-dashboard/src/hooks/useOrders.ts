@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { orderService } from "@/services/api/order.service";
 import { useAuth } from "@/components/AuthProvider";
+import { useSocket } from "@/contexts/SocketContext";
 
 export const useOrders = () => {
     const { vendor } = useAuth();
@@ -12,6 +14,32 @@ export const useOrders = () => {
         queryFn: () => orderService.getVendorOrders(vendorId!),
         enabled: !!vendorId,
     });
+
+    const { socket } = useSocket();
+
+    useEffect(() => {
+        if (!socket || !vendorId) return;
+
+        const handleUpdate = () => {
+            queryClient.invalidateQueries({ queryKey: ["vendor-orders", vendorId] });
+        };
+
+        const events = [
+            "ORDER_CREATED",
+            "ORDER_CONFIRMED",
+            "ORDER_CANCELLED",
+            "ORDER_READY",
+            "ORDER_PICKED_UP",
+            "ORDER_ON_THE_WAY",
+            "ORDER_DELIVERED",
+        ];
+
+        events.forEach(event => socket.on(event, handleUpdate));
+
+        return () => {
+            events.forEach(event => socket.off(event, handleUpdate));
+        };
+    }, [socket, vendorId, queryClient]);
 
     const updateStatusMutation = useMutation({
         mutationFn: ({ id, status }: { id: string; status: string }) =>

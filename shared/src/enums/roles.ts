@@ -3,4 +3,5 @@ export enum UserRole {
   VENDOR = "VENDOR",
   COURIER = "COURIER",
   ADMIN = "ADMIN",
+  DELIVERY_MANAGER = "DELIVERY_MANAGER",
 }

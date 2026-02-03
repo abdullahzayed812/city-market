@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSocket } from "@/contexts/SocketContext";
 import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { deliveryService } from "@/services/api/delivery.service";
@@ -24,6 +25,30 @@ const Deliveries = () => {
     queryKey: ["available-couriers"],
     queryFn: deliveryService.getAvailableCouriers,
   });
+
+  const { socket } = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleUpdate = () => {
+      queryClient.invalidateQueries({ queryKey: ["deliveries"] });
+    };
+
+    const events = [
+      "ORDER_READY",
+      "COURIER_ASSIGNED",
+      "ORDER_PICKED_UP",
+      "ORDER_ON_THE_WAY",
+      "ORDER_DELIVERED",
+    ];
+
+    events.forEach(event => socket.on(event, handleUpdate));
+
+    return () => {
+      events.forEach(event => socket.off(event, handleUpdate));
+    };
+  }, [socket, queryClient]);
 
   const assignMutation = useMutation({
     mutationFn: ({ deliveryId, courierId }: { deliveryId: string; courierId: string }) =>
