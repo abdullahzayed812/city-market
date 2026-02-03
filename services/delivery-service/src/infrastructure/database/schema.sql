@@ -19,7 +19,7 @@ CREATE TABLE deliveries (
   id VARCHAR(36) PRIMARY KEY,
   order_id VARCHAR(36) UNIQUE NOT NULL,
   courier_id VARCHAR(36),
-  status ENUM('PENDING', 'ASSIGNED', 'PICKED_UP', 'IN_TRANSIT', 'DELIVERED', 'FAILED') DEFAULT 'PENDING',
+  status ENUM('PENDING', 'ASSIGNED', 'PICKED_UP', 'ON_THE_WAY', 'DELIVERED', 'FAILED') DEFAULT 'PENDING',
   pickup_address TEXT NOT NULL,
   delivery_address TEXT NOT NULL,
   pickup_latitude DECIMAL(10, 8),

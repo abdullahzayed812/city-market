@@ -33,7 +33,7 @@ export const createApp = () => {
   const deliveryService = new DeliveryService(
     courierRepo,
     deliveryRepo,
-    eventBus,
+    rabbitMQBus,
     orderClient,
     vendorClient
   );

@@ -7,7 +7,8 @@ import { OrderItemRepository } from "./infrastructure/repositories/order-item.re
 import { OrderStatusHistoryRepository } from "./infrastructure/repositories/order-status-history.repository";
 import { CatalogHttpClient } from "./infrastructure/http/catalog-http-client";
 import { errorHandler, Database } from "@city-market/shared";
-import { eventBus, rabbitMQBus } from "@city-market/shared";
+import { eventBus, rabbitMQBus, EventType } from "@city-market/shared";
+import { DeliveryUpdatedConsumer } from "./application/events/delivery-updated.consumer";
 import { config } from "./config/env";
 
 export const createApp = () => {
@@ -31,6 +32,11 @@ export const createApp = () => {
   const orderService = new OrderService(orderRepo, orderItemRepo, statusHistoryRepo, catalogClient, rabbitMQBus);
 
   const orderController = new OrderController(orderService);
+
+  const deliveryUpdatedConsumer = new DeliveryUpdatedConsumer(orderService);
+  rabbitMQBus.subscribe(EventType.ORDER_PICKED_UP, "order_service_pickup", (event) => deliveryUpdatedConsumer.handle(event));
+  rabbitMQBus.subscribe(EventType.ORDER_ON_THE_WAY, "order_service_ontheway", (event) => deliveryUpdatedConsumer.handle(event));
+  rabbitMQBus.subscribe(EventType.ORDER_DELIVERED, "order_service_delivered", (event) => deliveryUpdatedConsumer.handle(event));
 
   app.use("/", createOrderRoutes(orderController));
 

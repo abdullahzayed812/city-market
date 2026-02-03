@@ -29,6 +29,7 @@ const Orders = () => {
       case OrderStatus.CONFIRMED:
       case OrderStatus.PREPARING:
       case OrderStatus.READY:
+      case OrderStatus.PICKED_UP:
       case OrderStatus.ON_THE_WAY:
         return "secondary"; // active states
       default:

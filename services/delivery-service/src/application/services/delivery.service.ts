@@ -7,7 +7,7 @@ import { RegisterCourierDto, UpdateCourierDto } from "../../core/dto/courier.dto
 import { CreateDeliveryDto, AssignCourierDto, UpdateDeliveryStatusDto } from "../../core/dto/delivery.dto";
 import { DeliveryStatus } from "@city-market/shared";
 import { ValidationError, NotFoundError } from "@city-market/shared";
-import { EventBus, EventType } from "@city-market/shared";
+import { RabbitMQBus, EventType } from "@city-market/shared";
 import { OrderHttpClient } from "../../infrastructure/http/order-http-client";
 import { VendorHttpClient } from "../../infrastructure/http/vendor-http-client";
 
@@ -15,10 +15,10 @@ export class DeliveryService {
   constructor(
     private courierRepo: ICourierRepository,
     private deliveryRepo: IDeliveryRepository,
-    private eventBus: EventBus,
+    private eventBus: RabbitMQBus,
     private orderClient: OrderHttpClient,
     private vendorClient: VendorHttpClient
-  ) {}
+  ) { }
 
   // Courier management
   async registerCourier(dto: RegisterCourierDto): Promise<Courier> {
@@ -180,17 +180,14 @@ export class DeliveryService {
 
     await this.deliveryRepo.assignCourier(deliveryId, dto.courierId);
     await this.courierRepo.updateAvailability(dto.courierId, false);
-
-    // await this.eventBus.publish({
-    //   id: randomUUID(),
-    //   type: EventType.COURIER_ASSIGNED,
-    //   timestamp: new Date(),
-    //   payload: { deliveryId, courierId: dto.courierId, orderId: delivery.orderId },
-    // });
   }
 
   async updateDeliveryStatus(deliveryId: string, dto: UpdateDeliveryStatusDto): Promise<void> {
     const delivery = await this.getDeliveryById(deliveryId);
+
+    if (!this.isValidStatusTransition(delivery.status, dto.status)) {
+      throw new ValidationError(`Cannot transition from ${delivery.status} to ${dto.status}`);
+    }
 
     const updates: Partial<Delivery> = {
       status: dto.status,
@@ -199,12 +196,21 @@ export class DeliveryService {
 
     if (dto.status === DeliveryStatus.PICKED_UP) {
       updates.pickedUpAt = new Date();
-      // await this.eventBus.publish({
-      //   id: randomUUID(),
-      //   type: EventType.ORDER_PICKED_UP,
-      //   timestamp: new Date(),
-      //   payload: { deliveryId, orderId: delivery.orderId },
-      // });
+      await this.eventBus.publish({
+        id: randomUUID(),
+        type: EventType.ORDER_PICKED_UP,
+        timestamp: new Date(),
+        payload: { deliveryId, orderId: delivery.orderId },
+      });
+    }
+
+    if (dto.status === DeliveryStatus.ON_THE_WAY) {
+      await this.eventBus.publish({
+        id: randomUUID(),
+        type: EventType.ORDER_ON_THE_WAY,
+        timestamp: new Date(),
+        payload: { deliveryId, orderId: delivery.orderId },
+      });
     }
 
     if (dto.status === DeliveryStatus.DELIVERED) {
@@ -213,14 +219,27 @@ export class DeliveryService {
         await this.courierRepo.updateAvailability(delivery.courierId, true);
         await this.courierRepo.incrementDeliveries(delivery.courierId);
       }
-      // await this.eventBus.publish({
-      //   id: randomUUID(),
-      //   type: EventType.ORDER_DELIVERED,
-      //   timestamp: new Date(),
-      //   payload: { deliveryId, orderId: delivery.orderId },
-      // });
+      await this.eventBus.publish({
+        id: randomUUID(),
+        type: EventType.ORDER_DELIVERED,
+        timestamp: new Date(),
+        payload: { deliveryId, orderId: delivery.orderId },
+      });
     }
 
     await this.deliveryRepo.update(deliveryId, updates);
+  }
+
+  private isValidStatusTransition(currentStatus: DeliveryStatus, newStatus: DeliveryStatus): boolean {
+    const transitions: Record<DeliveryStatus, DeliveryStatus[]> = {
+      [DeliveryStatus.PENDING]: [DeliveryStatus.ASSIGNED, DeliveryStatus.FAILED],
+      [DeliveryStatus.ASSIGNED]: [DeliveryStatus.PICKED_UP, DeliveryStatus.FAILED],
+      [DeliveryStatus.PICKED_UP]: [DeliveryStatus.ON_THE_WAY, DeliveryStatus.FAILED],
+      [DeliveryStatus.ON_THE_WAY]: [DeliveryStatus.DELIVERED, DeliveryStatus.FAILED],
+      [DeliveryStatus.DELIVERED]: [],
+      [DeliveryStatus.FAILED]: [],
+    };
+
+    return transitions[currentStatus]?.includes(newStatus) || false;
   }
 }
