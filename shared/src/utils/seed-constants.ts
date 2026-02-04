@@ -4,6 +4,7 @@ export const SEED_DATA = {
         CUSTOMER: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12",
         VENDOR: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13",
         COURIER: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a14",
+        DELIVERY_MANAGER: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a15",
     },
     CUSTOMERS: {
         JOHN_DOE: "b0eebc99-9c0b-4ef8-bb6d-6bb9bd380a21",

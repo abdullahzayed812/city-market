@@ -14,33 +14,30 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<any>(() => {
+    const savedUser = localStorage.getItem("vendor_user");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
   const [vendor, setVendor] = useState<any>(null);
   const [token, setToken] = useState<string | null>(localStorage.getItem("vendor_token"));
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const initAuth = async () => {
-      const savedUser = localStorage.getItem("vendor_user");
-      const savedToken = localStorage.getItem("vendor_token");
-
-      if (savedUser && savedToken) {
-        setUser(JSON.parse(savedUser));
+      if (user) {
         try {
           // Fetch the vendor profile to ensure we have the correct vendor.id
           const vendorProfile = await vendorService.getMyProfile();
           setVendor(vendorProfile);
         } catch (error) {
           console.error("Failed to fetch vendor profile:", error);
-          // If vendor profile fetch fails, we might want to logout or partial state?
-          // For now, let's keep user logged in but vendor might be null/stale
         }
       }
       setIsLoading(false);
     };
 
     initAuth();
-  }, []);
+  }, [user]);
 
   const login = async (credentials: any) => {
     const data = await authService.login(credentials);

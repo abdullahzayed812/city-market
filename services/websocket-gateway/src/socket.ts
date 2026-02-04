@@ -46,9 +46,9 @@ export const setupSocketServer = (io: Server) => {
         const response = await axios.get(`${VENDOR_SERVICE_URL}/me`, {
           headers: { Authorization: `Bearer ${socket.handshake.auth.token || socket.handshake.query.token}` },
         });
-        if (response.data && response.data.id) {
-          socket.join(`vendor:${response.data.id}`);
-          console.log(`Vendor ${user.email} joined room: vendor:${response.data.id}`);
+        if (response?.data?.data && response?.data?.data?.id) {
+          socket.join(`vendor:${response?.data?.data?.id}`);
+          console.log(`Vendor ${user.email} joined room: vendor:${response?.data?.data?.id}`);
         }
       } catch (error: any) {
         console.error(`Failed to fetch vendor profile for user ${user.userId}:`, error.message);
@@ -58,9 +58,9 @@ export const setupSocketServer = (io: Server) => {
         const response = await axios.get(`${DELIVERY_SERVICE_URL}/couriers/me`, {
           headers: { Authorization: `Bearer ${socket.handshake.auth.token || socket.handshake.query.token}` },
         });
-        if (response.data && response.data.id) {
-          socket.join(`courier:${response.data.id}`);
-          console.log(`Courier ${user.email} joined room: courier:${response.data.id}`);
+        if (response?.data?.data && response?.data?.data?.id) {
+          socket.join(`courier:${response?.data?.data?.id}`);
+          console.log(`Courier ${user.email} joined room: courier:${response?.data?.data?.id}`);
         }
       } catch (error: any) {
         console.error(`Failed to fetch courier profile for user ${user.userId}:`, error.message);

@@ -37,6 +37,7 @@ const Deliveries = () => {
 
     const events = [
       "ORDER_READY",
+      "DELIVERY_CREATED",
       "COURIER_ASSIGNED",
       "ORDER_PICKED_UP",
       "ORDER_ON_THE_WAY",

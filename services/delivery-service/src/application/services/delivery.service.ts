@@ -133,7 +133,22 @@ export class DeliveryService {
       updatedAt: new Date(),
     };
 
-    return this.deliveryRepo.create(delivery);
+    const createdDelivery = await this.deliveryRepo.create(delivery);
+
+    await this.eventBus.publish({
+      id: randomUUID(),
+      type: EventType.DELIVERY_CREATED,
+      timestamp: new Date(),
+      payload: {
+        deliveryId: createdDelivery.id,
+        orderId: createdDelivery.orderId,
+        status: createdDelivery.status,
+        vendorId: order.vendorId,
+        customerId: order.customerId
+      },
+    });
+
+    return createdDelivery;
   }
 
   async getDeliveryById(id: string): Promise<Delivery> {

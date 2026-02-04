@@ -6,51 +6,51 @@ export const createDeliveryRoutes = (controller: DeliveryController): Router => 
   const router = Router();
 
   // Courier routes
-  router.post("/couriers", authenticate, authorize(UserRole.COURIER, UserRole.ADMIN), controller.registerCourier);
-  router.get("/couriers", authenticate, authorize(UserRole.COURIER, UserRole.ADMIN), controller.getAllCouriers);
-  router.get("/couriers/me", authenticate, authorize(UserRole.COURIER, UserRole.ADMIN), controller.getMyCourier);
+  router.post("/couriers", authenticate, authorize(UserRole.ADMIN, UserRole.DELIVERY_MANAGER), controller.registerCourier);
+  router.get("/couriers", authenticate, authorize(UserRole.ADMIN, UserRole.DELIVERY_MANAGER), controller.getAllCouriers);
+  router.get("/couriers/me", authenticate, authorize(UserRole.COURIER), controller.getMyCourier);
   router.get(
     "/couriers/available",
     authenticate,
-    authorize(UserRole.COURIER, UserRole.ADMIN),
+    authorize(UserRole.ADMIN, UserRole.DELIVERY_MANAGER, UserRole.COURIER),
     controller.getAvailableCouriers
   );
-  router.patch("/couriers/:id", authenticate, authorize(UserRole.COURIER, UserRole.ADMIN), controller.updateCourier);
+  router.patch("/couriers/:id", authenticate, authorize(UserRole.ADMIN, UserRole.DELIVERY_MANAGER, UserRole.COURIER), controller.updateCourier);
   router.patch(
     "/couriers/:id/availability",
     authenticate,
-    authorize(UserRole.COURIER, UserRole.ADMIN),
+    authorize(UserRole.COURIER),
     controller.updateAvailability
   );
 
   // Delivery routes
-  router.post("/deliveries", authenticate, authorize(UserRole.COURIER, UserRole.ADMIN), controller.createDelivery);
+  router.post("/deliveries", authenticate, authorize(UserRole.ADMIN, UserRole.DELIVERY_MANAGER), controller.createDelivery);
   router.get(
     "/deliveries/pending",
     authenticate,
-    authorize(UserRole.COURIER, UserRole.ADMIN),
+    authorize(UserRole.ADMIN, UserRole.DELIVERY_MANAGER, UserRole.COURIER),
     controller.getPendingDeliveries
   );
   router.get(
     "/deliveries/my",
     authenticate,
-    authorize(UserRole.COURIER, UserRole.ADMIN),
+    authorize(UserRole.COURIER),
     controller.getMyCourierDeliveries
   );
-  router.get("/deliveries/:id", authenticate, authorize(UserRole.COURIER, UserRole.ADMIN), controller.getDeliveryById);
+  router.get("/deliveries/:id", authenticate, authorize(UserRole.ADMIN, UserRole.DELIVERY_MANAGER, UserRole.COURIER), controller.getDeliveryById);
   router.post(
     "/deliveries/:id/assign",
     authenticate,
-    authorize(UserRole.COURIER, UserRole.ADMIN),
+    authorize(UserRole.ADMIN, UserRole.DELIVERY_MANAGER),
     controller.assignCourier
   );
   router.patch(
     "/deliveries/:id/status",
     authenticate,
-    authorize(UserRole.COURIER, UserRole.ADMIN),
+    authorize(UserRole.COURIER, UserRole.ADMIN, UserRole.DELIVERY_MANAGER),
     controller.updateDeliveryStatus
   );
-  router.get("/deliveries", authenticate, authorize(UserRole.COURIER, UserRole.ADMIN), controller.getAllDeliveries);
+  router.get("/deliveries", authenticate, authorize(UserRole.ADMIN, UserRole.DELIVERY_MANAGER), controller.getAllDeliveries);
 
   return router;
 };

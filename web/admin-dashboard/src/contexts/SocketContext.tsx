@@ -16,6 +16,8 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
+  // console.log(token, user);
+
   useEffect(() => {
     if (!token || !user) {
       if (socket) {
@@ -55,9 +57,10 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     // Cleanup on unmount or token change
     return () => {
+      console.log("Disconnect websocket");
       newSocket.disconnect();
     };
-  }, [token]);
+  }, [token, user]);
 
   return <SocketContext.Provider value={{ socket, isConnected }}>{children}</SocketContext.Provider>;
 };

@@ -3,63 +3,70 @@ import bcrypt from "bcrypt";
 import { config } from "../../config/env";
 
 const seedDb = async () => {
-    const db = Database.getInstance({
-        host: config.dbHost,
-        port: config.dbPort,
-        user: config.dbUser,
-        password: config.dbPassword,
-        database: config.dbName,
-    });
-    const connection = db.getPool();
+  const db = Database.getInstance({
+    host: config.dbHost,
+    port: config.dbPort,
+    user: config.dbUser,
+    password: config.dbPassword,
+    database: config.dbName,
+  });
+  const connection = db.getPool();
 
-    try {
-        const passwordHash = await bcrypt.hash("password123", 10);
+  try {
+    const passwordHash = await bcrypt.hash("password123", 10);
 
-        const users = [
-            {
-                id: SEED_DATA.USERS.ADMIN,
-                email: "admin@citymarket.com",
-                password_hash: passwordHash,
-                role: "ADMIN",
-                is_active: true
-            },
-            {
-                id: SEED_DATA.USERS.CUSTOMER,
-                email: "customer@citymarket.com",
-                password_hash: passwordHash,
-                role: "CUSTOMER",
-                is_active: true
-            },
-            {
-                id: SEED_DATA.USERS.VENDOR,
-                email: "vendor@citymarket.com",
-                password_hash: passwordHash,
-                role: "VENDOR",
-                is_active: true
-            },
-            {
-                id: SEED_DATA.USERS.COURIER,
-                email: "courier@citymarket.com",
-                password_hash: passwordHash,
-                role: "COURIER",
-                is_active: true
-            }
-        ];
+    const users = [
+      {
+        id: SEED_DATA.USERS.ADMIN,
+        email: "admin@citymarket.com",
+        password_hash: passwordHash,
+        role: "ADMIN",
+        is_active: true,
+      },
+      {
+        id: SEED_DATA.USERS.CUSTOMER,
+        email: "customer@citymarket.com",
+        password_hash: passwordHash,
+        role: "CUSTOMER",
+        is_active: true,
+      },
+      {
+        id: SEED_DATA.USERS.VENDOR,
+        email: "vendor@citymarket.com",
+        password_hash: passwordHash,
+        role: "VENDOR",
+        is_active: true,
+      },
+      {
+        id: SEED_DATA.USERS.COURIER,
+        email: "courier@citymarket.com",
+        password_hash: passwordHash,
+        role: "COURIER",
+        is_active: true,
+      },
+      {
+        id: SEED_DATA.USERS.DELIVERY_MANAGER,
+        email: "deliverymanager@citymarket.com",
+        password_hash: passwordHash,
+        role: "DELIVERY_MANAGER",
+        is_active: true,
+      },
+    ];
 
-        for (const user of users) {
-            await connection.execute(
-                "INSERT IGNORE INTO users (id, email, password_hash, role, is_active) VALUES (?, ?, ?, ?, ?)",
-                [user.id, user.email, user.password_hash, user.role, user.is_active]
-            );
-        }
-
-        console.log("Database seeded successfully");
-    } catch (error) {
-        console.error("Error seeding database:", error);
-        process.exit(1);
-    } finally {
-        await connection.end();
+    for (const user of users) {
+      await connection.execute(
+        "INSERT IGNORE INTO users (id, email, password_hash, role, is_active) VALUES (?, ?, ?, ?, ?)",
+        [user.id, user.email, user.password_hash, user.role, user.is_active]
+      );
     }
+
+    console.log("Database seeded successfully");
+  } catch (error) {
+    console.error("Error seeding database:", error);
+    process.exit(1);
+  } finally {
+    await connection.end();
+  }
 };
 
 seedDb();
