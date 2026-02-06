@@ -195,6 +195,17 @@ export class DeliveryService {
 
     await this.deliveryRepo.assignCourier(deliveryId, dto.courierId);
     await this.courierRepo.updateAvailability(dto.courierId, false);
+
+    await this.eventBus.publish({
+      id: randomUUID(),
+      type: EventType.COURIER_ASSIGNED,
+      timestamp: new Date(),
+      payload: {
+        deliveryId,
+        orderId: delivery.orderId,
+        courierId: dto.courierId,
+      },
+    });
   }
 
   async updateDeliveryStatus(deliveryId: string, dto: UpdateDeliveryStatusDto): Promise<void> {

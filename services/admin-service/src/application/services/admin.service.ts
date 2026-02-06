@@ -27,7 +27,9 @@ export class AdminService {
       totalVendors: vendorsData.data?.length || 0,
       totalCouriers: couriersData.data?.length || 0,
       totalUsers: usersData?.data?.length || 0,
-      revenueToday: 0, // Calculate from orders
+      revenueToday: (ordersData.data ?? [])
+        .filter((order: any) => order.status === "DELIVERED")
+        .reduce((sum: any, order: any) => sum + order.commissionAmount, 0),
     };
 
     return stats;
