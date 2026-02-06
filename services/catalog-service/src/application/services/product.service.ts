@@ -1,8 +1,10 @@
+import fs from "fs/promises";
+import path from "path";
 import { randomUUID } from "crypto";
 import { IProductRepository } from "../../core/interfaces/product.repository";
 import { Product } from "../../core/entities/product.entity";
 import { CreateProductDto, UpdateProductDto, ProductFilter } from "../../core/dto/product.dto";
-import { ValidationError, NotFoundError } from "@city-market/shared";
+import { ValidationError, NotFoundError, Logger } from "@city-market/shared";
 
 export class ProductService {
   constructor(private productRepo: IProductRepository) { }
@@ -79,6 +81,18 @@ export class ProductService {
 
   async deleteProduct(id: string): Promise<void> {
     const product = await this.getProductById(id);
+
+    // Delete image if it exists
+    if (product.imageUrl) {
+      try {
+        const imagePath = path.join(process.cwd(), product.imageUrl.replace("/catalog", ""));
+        await fs.unlink(imagePath);
+        Logger.info("Product image deleted on record deletion", { path: imagePath });
+      } catch (error) {
+        Logger.error("Failed to delete product image during deletion", { error });
+      }
+    }
+
     await this.productRepo.delete(id);
   }
 
@@ -99,6 +113,18 @@ export class ProductService {
 
   async updateProductImage(id: string, imageUrl: string): Promise<void> {
     const product = await this.getProductById(id);
+
+    // Delete old image if it exists
+    if (product.imageUrl) {
+      try {
+        const oldImagePath = path.join(process.cwd(), product.imageUrl.replace("/catalog", ""));
+        await fs.unlink(oldImagePath);
+        Logger.info("Old product image deleted", { path: oldImagePath });
+      } catch (error) {
+        Logger.error("Failed to delete old product image", { error });
+      }
+    }
+
     await this.productRepo.update(id, { imageUrl });
   }
 }

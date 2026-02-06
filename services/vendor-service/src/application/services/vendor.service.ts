@@ -1,3 +1,5 @@
+import fs from "fs/promises";
+import path from "path";
 import { randomUUID } from "crypto";
 import { IVendorRepository } from "../../core/interfaces/vendor.repository";
 import { IWorkingHoursRepository } from "../../core/interfaces/working-hours.repository";
@@ -5,7 +7,7 @@ import { Vendor } from "../../core/entities/vendor.entity";
 import { WorkingHours } from "../../core/entities/working-hours.entity";
 import { CreateVendorDto, UpdateVendorDto, SetWorkingHoursDto } from "../../core/dto/vendor.dto";
 import { ShopStatus } from "@city-market/shared";
-import { ValidationError, NotFoundError } from "@city-market/shared";
+import { ValidationError, NotFoundError, Logger } from "@city-market/shared";
 import { EventBus, BaseEvent, EventType } from "@city-market/shared";
 
 export class VendorService {
@@ -107,6 +109,18 @@ export class VendorService {
 
   async updateStoreImage(id: string, imagePath: string): Promise<void> {
     const vendor = await this.getVendorById(id);
+
+    // Delete old image if it exists
+    if (vendor.storeImage) {
+      try {
+        const oldImagePath = path.join(process.cwd(), vendor.storeImage.replace("/vendors", ""));
+        await fs.unlink(oldImagePath);
+        Logger.info("Old store image deleted", { path: oldImagePath });
+      } catch (error) {
+        Logger.error("Failed to delete old store image", { error });
+      }
+    }
+
     await this.vendorRepo.update(id, { storeImage: imagePath });
   }
 }

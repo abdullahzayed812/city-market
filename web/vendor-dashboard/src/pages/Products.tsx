@@ -57,21 +57,24 @@ const Products = () => {
 
   const handleUpdateProduct = () => {
     if (editingProduct) {
-      updateProduct({
-        id: editingProduct.id,
-        data: {
-          name: editingProduct.name,
-          description: editingProduct.description,
-          price: editingProduct.price,
-          stockQuantity: editingProduct.stockQuantity,
-          categoryId: editingProduct.categoryId,
+      updateProduct(
+        {
+          id: editingProduct.id,
+          data: {
+            name: editingProduct.name,
+            description: editingProduct.description,
+            price: editingProduct.price,
+            stockQuantity: editingProduct.stockQuantity,
+            categoryId: editingProduct.categoryId,
+          },
         },
-      }, {
-        onSuccess: () => {
-          setIsEditDialogOpen(false);
-          setEditingProduct(null);
-        },
-      });
+        {
+          onSuccess: () => {
+            setIsEditDialogOpen(false);
+            setEditingProduct(null);
+          },
+        }
+      );
     }
   };
 
@@ -81,8 +84,6 @@ const Products = () => {
       uploadImage({ id: productId, file });
     }
   };
-
-  console.log(products.map((product: any) => `${import.meta.env.VITE_API_BASE_URL}${product.imageUrl}`));
 
   return (
     <div className="space-y-6">
@@ -212,7 +213,9 @@ const Products = () => {
                       id="edit-stock"
                       type="number"
                       value={editingProduct.stockQuantity}
-                      onChange={(e) => setEditingProduct({ ...editingProduct, stockQuantity: parseInt(e.target.value) })}
+                      onChange={(e) =>
+                        setEditingProduct({ ...editingProduct, stockQuantity: parseInt(e.target.value) })
+                      }
                     />
                   </div>
                 </div>
@@ -253,7 +256,11 @@ const Products = () => {
                   <div className="relative h-12 w-12 overflow-hidden rounded bg-muted group">
                     {product.imageUrl ? (
                       <img
-                        src={product.imageUrl.startsWith('/') ? `${import.meta.env.VITE_API_BASE_URL}${product.imageUrl}` : product.imageUrl}
+                        src={
+                          product.imageUrl.startsWith("/")
+                            ? `${import.meta.env.VITE_API_BASE_URL}${product.imageUrl}`
+                            : product.imageUrl
+                        }
                         alt={product.name}
                         className="h-full w-full object-cover"
                       />
