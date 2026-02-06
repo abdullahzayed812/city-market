@@ -1,11 +1,11 @@
 import { Response, NextFunction } from "express";
 import { ProductService } from "../../application/services/product.service";
-import { ApiResponse } from "@city-market/shared";
+import { ApiResponse, ValidationError } from "@city-market/shared";
 import { Logger } from "@city-market/shared";
 import { AuthRequest } from "@city-market/shared";
 
 export class ProductController {
-  constructor(private productService: ProductService) {}
+  constructor(private productService: ProductService) { }
 
   create = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
@@ -89,6 +89,19 @@ export class ProductController {
     try {
       await this.productService.deleteProduct(req.params.id);
       res.json(ApiResponse.success(null, "Product deleted"));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  uploadImage = async (req: AuthRequest, res: Response, next: NextFunction) => {
+    try {
+      if (!req.file) {
+        throw new ValidationError("No image file provided");
+      }
+      const imageUrl = `/catalog/uploads/products/${req.file.filename}`;
+      await this.productService.updateProductImage(req.params.id, imageUrl);
+      res.json(ApiResponse.success({ imageUrl }, "Product image uploaded"));
     } catch (error) {
       next(error);
     }

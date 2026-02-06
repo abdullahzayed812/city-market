@@ -14,8 +14,8 @@ export class VendorRepository implements IVendorRepository {
     const query = `
       INSERT INTO vendors (
         id, user_id, shop_name, shop_description, phone, address,
-        latitude, longitude, status, commission_rate, is_active
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        latitude, longitude, store_image, status, commission_rate, is_active
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     await this.pool.execute(query, [
       vendor.id,
@@ -26,6 +26,7 @@ export class VendorRepository implements IVendorRepository {
       vendor.address,
       vendor.latitude || null,
       vendor.longitude || null,
+      vendor.storeImage || null,
       vendor.status,
       vendor.commissionRate,
       vendor.isActive,
@@ -85,6 +86,10 @@ export class VendorRepository implements IVendorRepository {
       fields.push("longitude = ?");
       values.push(data.longitude);
     }
+    if (data.storeImage !== undefined) {
+      fields.push("store_image = ?");
+      values.push(data.storeImage);
+    }
 
     if (fields.length === 0) return;
 
@@ -113,6 +118,7 @@ export class VendorRepository implements IVendorRepository {
       address: row.address,
       latitude: row.latitude,
       longitude: row.longitude,
+      storeImage: row.store_image,
       status: row.status,
       commissionRate: parseFloat(row.commission_rate),
       isActive: row.is_active,

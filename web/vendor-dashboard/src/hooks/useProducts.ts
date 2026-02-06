@@ -48,6 +48,14 @@ export const useProducts = () => {
         },
     });
 
+    const uploadImageMutation = useMutation({
+        mutationFn: ({ id, file }: { id: string; file: File }) =>
+            productService.uploadImage(id, file),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["vendor-products", vendorId] });
+        },
+    });
+
     return {
         products: productsQuery.data || [],
         categories: categoriesQuery.data || [],
@@ -56,10 +64,12 @@ export const useProducts = () => {
         updateProduct: updateProductMutation.mutate,
         updateStock: updateStockMutation.mutate,
         deleteProduct: deleteProductMutation.mutate,
+        uploadImage: uploadImageMutation.mutate,
         isMutating:
             createProductMutation.isPending ||
             updateProductMutation.isPending ||
             updateStockMutation.isPending ||
-            deleteProductMutation.isPending,
+            deleteProductMutation.isPending ||
+            uploadImageMutation.isPending,
     };
 };

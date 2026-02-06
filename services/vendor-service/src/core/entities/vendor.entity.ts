@@ -9,6 +9,7 @@ export interface Vendor {
   address: string;
   latitude?: number;
   longitude?: number;
+  storeImage?: string;
   status: ShopStatus;
   commissionRate: number;
   isActive: boolean;

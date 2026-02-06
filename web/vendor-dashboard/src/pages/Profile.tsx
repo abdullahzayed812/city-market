@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Clock, MapPin, Phone, Store } from "lucide-react";
+import { Camera, Clock, MapPin, Phone, Store } from "lucide-react";
+import { toast } from "sonner";
 
 const Profile = () => {
     const { t } = useTranslation();
@@ -42,11 +43,30 @@ const Profile = () => {
         mutationFn: (data: any) => vendorService.updateProfile(vendor?.id!, data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["vendor-profile"] });
+            toast.success("Profile updated successfully");
         },
+    });
+
+    const uploadImageMutation = useMutation({
+        mutationFn: (file: File) => vendorService.uploadImage(vendor?.id!, file),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["vendor-profile"] });
+            toast.success("Store image uploaded successfully");
+        },
+        onError: (error: any) => {
+            toast.error(error.response?.data?.message || "Failed to upload image");
+        }
     });
 
     const handleUpdateProfile = () => {
         updateProfileMutation.mutate(profileData);
+    };
+
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            uploadImageMutation.mutate(file);
+        }
     };
 
     return (
@@ -73,7 +93,46 @@ const Profile = () => {
                         <CardHeader>
                             <CardTitle>Store Information</CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-4">
+                        <CardContent className="space-y-6">
+                            <div className="flex flex-col items-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
+                                <div className="relative h-24 w-24 overflow-hidden rounded-lg bg-muted">
+                                    {vendor?.storeImage ? (
+                                        <img
+                                            src={vendor.storeImage.startsWith('/') ? `${import.meta.env.VITE_API_BASE_URL}${vendor.storeImage}` : vendor.storeImage}
+                                            alt="Store"
+                                            className="h-full w-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="flex h-full w-full items-center justify-center">
+                                            <Store className="h-10 w-10 text-muted-foreground" />
+                                        </div>
+                                    )}
+                                    <Label
+                                        htmlFor="image-upload"
+                                        className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black/40 opacity-0 transition-opacity hover:opacity-100"
+                                    >
+                                        <Camera className="h-6 w-6 text-white" />
+                                    </Label>
+                                    <input
+                                        id="image-upload"
+                                        type="file"
+                                        className="hidden"
+                                        accept="image/*"
+                                        onChange={handleImageUpload}
+                                        disabled={uploadImageMutation.isPending}
+                                    />
+                                </div>
+                                <div className="space-y-1 text-center sm:text-left">
+                                    <h3 className="font-medium">Store Image</h3>
+                                    <p className="text-sm text-muted-foreground">
+                                        Click on the image to upload a new one. Max 5MB.
+                                    </p>
+                                    {uploadImageMutation.isPending && (
+                                        <p className="text-sm text-primary animate-pulse">Uploading...</p>
+                                    )}
+                                </div>
+                            </div>
+
                             <div className="grid gap-4 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="name">Store Name</Label>

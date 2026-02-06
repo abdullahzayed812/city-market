@@ -25,4 +25,14 @@ export const productService = {
     const response = await apiClient.get("/catalog/categories");
     return response.data?.data;
   },
+  uploadImage: async (id: string, file: File) => {
+    const formData = new FormData();
+    formData.append("image", file);
+    const response = await apiClient.post(`/catalog/products/${id}/image`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data?.data;
+  },
 };

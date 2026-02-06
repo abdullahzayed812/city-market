@@ -21,4 +21,14 @@ export const vendorService = {
     const response = await apiClient.get(`/vendors/${id}/working-hours`);
     return response.data?.data;
   },
+  uploadImage: async (id: string, file: File) => {
+    const formData = new FormData();
+    formData.append("image", file);
+    const response = await apiClient.post(`/vendors/${id}/image`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data?.data;
+  },
 };

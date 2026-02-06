@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { VendorController } from "../controllers/vendor.controller";
 import { authenticate, authorize, UserRole } from "@city-market/shared";
+import { uploadVendorImage } from "../middlewares/upload.middleware";
 
 export const createVendorRoutes = (controller: VendorController): Router => {
   const router = Router();
@@ -23,6 +24,13 @@ export const createVendorRoutes = (controller: VendorController): Router => {
     authenticate,
     authorize(UserRole.VENDOR, UserRole.ADMIN),
     controller.getWorkingHours
+  );
+  router.post(
+    "/:id/image",
+    authenticate,
+    authorize(UserRole.VENDOR, UserRole.ADMIN),
+    uploadVendorImage.single("image"),
+    controller.uploadImage
   );
 
   return router;

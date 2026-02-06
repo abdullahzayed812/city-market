@@ -104,4 +104,9 @@ export class VendorService {
   async getWorkingHours(vendorId: string): Promise<WorkingHours[]> {
     return this.workingHoursRepo.findByVendorId(vendorId);
   }
+
+  async updateStoreImage(id: string, imagePath: string): Promise<void> {
+    const vendor = await this.getVendorById(id);
+    await this.vendorRepo.update(id, { storeImage: imagePath });
+  }
 }

@@ -14,12 +14,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MoreHorizontal, Plus, Pencil, Trash2, Power, PowerOff } from "lucide-react";
+import { Camera, Image as ImageIcon, MoreHorizontal, Plus, Pencil, Trash2, Power, PowerOff } from "lucide-react";
 
 const Products = () => {
   const { t } = useTranslation();
-  const { products, categories, isLoading, createProduct, updateProduct, deleteProduct } = useProducts();
+  const { products, categories, isLoading, createProduct, updateProduct, deleteProduct, uploadImage } = useProducts();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [newProduct, setNewProduct] = useState({
     name: "",
     description: "",
@@ -27,6 +28,7 @@ const Products = () => {
     stockQuantity: 0,
     categoryId: "",
   });
+  const [editingProduct, setEditingProduct] = useState<any>(null);
 
   if (isLoading) {
     return <div className="flex items-center justify-center h-full">Loading...</div>;
@@ -40,6 +42,47 @@ const Products = () => {
       },
     });
   };
+
+  const handleEditProduct = (product: any) => {
+    setEditingProduct({
+      id: product.id,
+      name: product.name,
+      description: product.description || "",
+      price: product.price,
+      stockQuantity: product.stockQuantity,
+      categoryId: product.categoryId,
+    });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleUpdateProduct = () => {
+    if (editingProduct) {
+      updateProduct({
+        id: editingProduct.id,
+        data: {
+          name: editingProduct.name,
+          description: editingProduct.description,
+          price: editingProduct.price,
+          stockQuantity: editingProduct.stockQuantity,
+          categoryId: editingProduct.categoryId,
+        },
+      }, {
+        onSuccess: () => {
+          setIsEditDialogOpen(false);
+          setEditingProduct(null);
+        },
+      });
+    }
+  };
+
+  const handleImageUpload = (productId: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      uploadImage({ id: productId, file });
+    }
+  };
+
+  console.log(products.map((product: any) => `${import.meta.env.VITE_API_BASE_URL}${product.imageUrl}`));
 
   return (
     <div className="space-y-6">
@@ -119,12 +162,82 @@ const Products = () => {
             </div>
           </DialogContent>
         </Dialog>
+
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Product</DialogTitle>
+            </DialogHeader>
+            {editingProduct && (
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-name">Product Name</Label>
+                  <Input
+                    id="edit-name"
+                    value={editingProduct.name}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-category">Category</Label>
+                  <Select
+                    value={editingProduct.categoryId}
+                    onValueChange={(val) => setEditingProduct({ ...editingProduct, categoryId: val })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((cat: any) => (
+                        <SelectItem key={cat.id} value={cat.id}>
+                          {cat.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-price">Price ($)</Label>
+                    <Input
+                      id="edit-price"
+                      type="number"
+                      value={editingProduct.price}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, price: parseFloat(e.target.value) })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-stock">Stock</Label>
+                    <Input
+                      id="edit-stock"
+                      type="number"
+                      value={editingProduct.stockQuantity}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, stockQuantity: parseInt(e.target.value) })}
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-description">Description</Label>
+                  <Input
+                    id="edit-description"
+                    value={editingProduct.description}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })}
+                  />
+                </div>
+                <Button className="w-full" onClick={handleUpdateProduct}>
+                  Update Product
+                </Button>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
 
       <div className="border rounded-lg bg-card">
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-[80px]">Image</TableHead>
               <TableHead>Product</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Price</TableHead>
@@ -136,6 +249,34 @@ const Products = () => {
           <TableBody>
             {products.map((product: any) => (
               <TableRow key={product.id}>
+                <TableCell>
+                  <div className="relative h-12 w-12 overflow-hidden rounded bg-muted group">
+                    {product.imageUrl ? (
+                      <img
+                        src={product.imageUrl.startsWith('/') ? `${import.meta.env.VITE_API_BASE_URL}${product.imageUrl}` : product.imageUrl}
+                        alt={product.name}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center">
+                        <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                      </div>
+                    )}
+                    <Label
+                      htmlFor={`img-${product.id}`}
+                      className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100"
+                    >
+                      <Camera className="h-4 w-4 text-white" />
+                    </Label>
+                    <input
+                      id={`img-${product.id}`}
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={(e) => handleImageUpload(product.id, e)}
+                    />
+                  </div>
+                </TableCell>
                 <TableCell className="font-medium">{product.name}</TableCell>
                 <TableCell>{product.categoryName || "Uncategorized"}</TableCell>
                 <TableCell>${product.price}</TableCell>
@@ -157,7 +298,7 @@ const Products = () => {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem className="gap-2">
+                      <DropdownMenuItem className="gap-2" onClick={() => handleEditProduct(product)}>
                         <Pencil className="h-4 w-4" /> Edit Product
                       </DropdownMenuItem>
                       <DropdownMenuItem

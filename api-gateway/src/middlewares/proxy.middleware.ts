@@ -13,9 +13,9 @@ export const setupProxy = (basePath: string, targetUrl: string) => {
           proxyReq.setHeader("Authorization", req.headers.authorization);
         }
 
-        if (req.body && Object.keys(req.body).length > 0) {
+        // Only handle body if it was parsed by express.json() and it's an appropriate content-type
+        if (req.body && Object.keys(req.body).length > 0 && req.headers["content-type"]?.includes("application/json")) {
           const bodyData = JSON.stringify(req.body);
-          proxyReq.setHeader("Content-Type", "application/json");
           proxyReq.setHeader("Content-Length", Buffer.byteLength(bodyData));
           proxyReq.write(bodyData);
         }

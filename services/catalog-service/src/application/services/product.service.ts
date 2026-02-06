@@ -96,4 +96,9 @@ export class ProductService {
     await this.productRepo.decrementStock(productId, quantity);
     return true;
   }
+
+  async updateProductImage(id: string, imageUrl: string): Promise<void> {
+    const product = await this.getProductById(id);
+    await this.productRepo.update(id, { imageUrl });
+  }
 }

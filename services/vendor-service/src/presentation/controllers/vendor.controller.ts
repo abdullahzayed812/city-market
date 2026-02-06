@@ -1,11 +1,11 @@
 import { Response, NextFunction } from "express";
 import { VendorService } from "../../application/services/vendor.service";
-import { ApiResponse } from "@city-market/shared";
+import { ApiResponse, ValidationError } from "@city-market/shared";
 import { Logger } from "@city-market/shared";
 import { AuthRequest } from "@city-market/shared";
 
 export class VendorController {
-  constructor(private vendorService: VendorService) {}
+  constructor(private vendorService: VendorService) { }
 
   create = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
@@ -87,6 +87,19 @@ export class VendorController {
     try {
       const hours = await this.vendorService.getWorkingHours(req.params.id);
       res.json(ApiResponse.success(hours));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  uploadImage = async (req: AuthRequest, res: Response, next: NextFunction) => {
+    try {
+      if (!req.file) {
+        throw new ValidationError("No image file provided");
+      }
+      const imageUrl = `/vendors/uploads/vendors/${req.file.filename}`;
+      await this.vendorService.updateStoreImage(req.params.id, imageUrl);
+      res.json(ApiResponse.success({ imageUrl }, "Store image uploaded"));
     } catch (error) {
       next(error);
     }

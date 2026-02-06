@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { ProductController } from "../controllers/product.controller";
+import { uploadProductImage } from "../middlewares/upload.middleware";
 
 export const createProductRoutes = (controller: ProductController): Router => {
   const router = Router();
@@ -11,6 +12,7 @@ export const createProductRoutes = (controller: ProductController): Router => {
   router.get("/products/:id", controller.getById);
   router.patch("/products/:id", controller.update);
   router.patch("/products/:id/stock", controller.updateStock);
+  router.post("/products/:id/image", uploadProductImage.single("image"), controller.uploadImage);
   router.delete("/products/:id", controller.delete);
 
   return router;
