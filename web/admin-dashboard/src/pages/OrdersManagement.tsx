@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MoreHorizontal, Eye, CheckCircle, XCircle } from "lucide-react";
+import { OrderStatus } from "@/types/order";
 
 interface Order {
   id: string;
@@ -84,6 +85,37 @@ const OrdersManagement: React.FC = () => {
     setIsModalOpen(true);
   };
 
+  const getStatusColor = (status: string) => {
+    const statusUpper = status.toUpperCase();
+    switch (statusUpper) {
+      case OrderStatus.CREATED:
+        return "bg-yellow-100 text-yellow-800";
+      case OrderStatus.CONFIRMED:
+        return "bg-blue-100 text-blue-800";
+      case OrderStatus.PREPARING:
+        return "bg-purple-100 text-purple-800";
+      case OrderStatus.READY:
+        return "bg-cyan-100 text-cyan-800";
+      case OrderStatus.PICKED_UP:
+        return "bg-indigo-100 text-indigo-800";
+      case OrderStatus.ON_THE_WAY:
+        return "bg-orange-100 text-orange-800";
+      case OrderStatus.DELIVERED:
+        return "bg-green-100 text-green-800";
+      case OrderStatus.CANCELLED:
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const formatStatus = (status: string) => {
+    return status
+      .split("_")
+      .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
+      .join(" ");
+  };
+
   if (isLoading) return <div>Loading...</div>;
 
   return (
@@ -109,12 +141,8 @@ const OrdersManagement: React.FC = () => {
                 <TableCell>{order.customerId.substring(0, 8)}</TableCell>
                 <TableCell>${order.totalAmount.toFixed(2)}</TableCell>
                 <TableCell>
-                  <Badge
-                    variant={
-                      order.status === "DELIVERED" ? "default" : order.status === "CREATED" ? "outline" : "secondary"
-                    }
-                  >
-                    {order.status}
+                  <Badge className={getStatusColor(order.status)}>
+                    {formatStatus(order.status)}
                   </Badge>
                 </TableCell>
                 <TableCell>{new Date(order.createdAt).toLocaleDateString()}</TableCell>
@@ -184,16 +212,8 @@ const OrdersManagement: React.FC = () => {
                 <div>
                   <p className="text-sm font-medium text-gray-500">Status</p>
                   <div>
-                    <Badge
-                      variant={
-                        selectedOrder.status === "DELIVERED"
-                          ? "default"
-                          : selectedOrder.status === "CREATED"
-                            ? "outline"
-                            : "secondary"
-                      }
-                    >
-                      {selectedOrder.status}
+                    <Badge className={getStatusColor(selectedOrder.status)}>
+                      {formatStatus(selectedOrder.status)}
                     </Badge>
                   </div>
                 </div>

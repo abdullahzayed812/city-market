@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Eye, CheckCircle, XCircle, Truck, Package, ChefHat } from "lucide-react";
+import { MoreHorizontal, Eye, CheckCircle, XCircle, Package, ChefHat } from "lucide-react";
 import { OrderStatus, type Order } from "@/types/order";
 
 const Orders = () => {
@@ -20,20 +20,26 @@ const Orders = () => {
     return <div className="flex items-center justify-center h-full">Loading...</div>;
   }
 
-  const getStatusBadgeVariant = (status: OrderStatus) => {
+  const getStatusColor = (status: OrderStatus) => {
     switch (status) {
-      case OrderStatus.DELIVERED:
-        return "default"; // or success color if available
-      case OrderStatus.CANCELLED:
-        return "destructive";
+      case OrderStatus.CREATED:
+        return "bg-yellow-100 text-yellow-800";
       case OrderStatus.CONFIRMED:
+        return "bg-blue-100 text-blue-800";
       case OrderStatus.PREPARING:
+        return "bg-purple-100 text-purple-800";
       case OrderStatus.READY:
+        return "bg-cyan-100 text-cyan-800";
       case OrderStatus.PICKED_UP:
+        return "bg-indigo-100 text-indigo-800";
       case OrderStatus.ON_THE_WAY:
-        return "secondary"; // active states
+        return "bg-orange-100 text-orange-800";
+      case OrderStatus.DELIVERED:
+        return "bg-green-100 text-green-800";
+      case OrderStatus.CANCELLED:
+        return "bg-red-100 text-red-800";
       default:
-        return "outline";
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -72,7 +78,7 @@ const Orders = () => {
                 <TableCell>{new Date(order.createdAt).toLocaleDateString()}</TableCell>
                 <TableCell>{order.customerName || "Customer"}</TableCell>
                 <TableCell>
-                  <Badge variant={getStatusBadgeVariant(order.status)}>{formatStatus(order.status)}</Badge>
+                  <Badge className={getStatusColor(order.status)}>{formatStatus(order.status)}</Badge>
                 </TableCell>
                 <TableCell className="text-right">${order.totalAmount}</TableCell>
                 <TableCell>

@@ -1,0 +1,18 @@
+export enum DeliveryStatus {
+    PENDING = "PENDING",
+    ASSIGNED = "ASSIGNED",
+    PICKED_UP = "PICKED_UP",
+    ON_THE_WAY = "ON_THE_WAY",
+    DELIVERED = "DELIVERED",
+}
+
+export enum OrderStatus {
+    CREATED = "CREATED",
+    CONFIRMED = "CONFIRMED",
+    PREPARING = "PREPARING",
+    READY = "READY",
+    PICKED_UP = "PICKED_UP",
+    ON_THE_WAY = "ON_THE_WAY",
+    DELIVERED = "DELIVERED",
+    CANCELLED = "CANCELLED",
+}

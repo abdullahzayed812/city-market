@@ -11,10 +11,12 @@ import LoginPage from "./pages/LoginPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./components/AuthProvider";
 import { SocketProvider } from "./contexts/SocketContext";
+import { Toaster } from "sonner";
 
 function App() {
   return (
     <AuthProvider>
+      <Toaster />
       <SocketProvider>
         <BrowserRouter>
           <Routes>

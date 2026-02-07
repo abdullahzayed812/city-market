@@ -26,10 +26,30 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          50: "#faf5ff",
+          100: "#f3e8ff",
+          200: "#e9d5ff",
+          300: "#d8b4fe",
+          400: "#c084fc",
+          500: "#a855f7",
+          600: "#9333ea",
+          700: "#7e22ce",
+          800: "#6b21a8",
+          900: "#581c87",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
+          50: "#f8fafc",
+          100: "#f1f5f9",
+          200: "#e2e8f0",
+          300: "#cbd5e1",
+          400: "#94a3b8",
+          500: "#64748b",
+          600: "#475569",
+          700: "#334155",
+          800: "#1e293b",
+          900: "#0f172a",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
@@ -50,6 +70,40 @@ export default {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+        status: {
+          created: {
+            DEFAULT: "#fef3c7",
+            foreground: "#92400e",
+          },
+          confirmed: {
+            DEFAULT: "#dbeafe",
+            foreground: "#1e40af",
+          },
+          preparing: {
+            DEFAULT: "#e9d5ff",
+            foreground: "#6b21a8",
+          },
+          ready: {
+            DEFAULT: "#cffafe",
+            foreground: "#155e75",
+          },
+          pickedUp: {
+            DEFAULT: "#e0e7ff",
+            foreground: "#3730a3",
+          },
+          onTheWay: {
+            DEFAULT: "#fed7aa",
+            foreground: "#9a3412",
+          },
+          delivered: {
+            DEFAULT: "#d1fae5",
+            foreground: "#065f46",
+          },
+          cancelled: {
+            DEFAULT: "#fee2e2",
+            foreground: "#991b1b",
+          },
         },
       },
       borderRadius: {

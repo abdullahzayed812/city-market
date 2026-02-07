@@ -14,13 +14,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Camera, Image as ImageIcon, MoreHorizontal, Plus, Pencil, Trash2, Power, PowerOff } from "lucide-react";
+import { Image as ImageIcon, MoreHorizontal, Plus, Pencil, Trash2, Power, PowerOff, Eye, Upload } from "lucide-react";
+import ProductImageModal from "@/components/ProductImageModal";
 
 const Products = () => {
   const { t } = useTranslation();
   const { products, categories, isLoading, createProduct, updateProduct, deleteProduct, uploadImage } = useProducts();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [newProduct, setNewProduct] = useState({
     name: "",
     description: "",
@@ -253,35 +256,61 @@ const Products = () => {
             {products.map((product: any) => (
               <TableRow key={product.id}>
                 <TableCell>
-                  <div className="relative h-12 w-12 overflow-hidden rounded bg-muted group">
-                    {product.imageUrl ? (
-                      <img
-                        src={
-                          product.imageUrl.startsWith("/")
-                            ? `${import.meta.env.VITE_API_BASE_URL}${product.imageUrl}`
-                            : product.imageUrl
-                        }
-                        alt={product.name}
-                        className="h-full w-full object-cover"
+                  <div className="flex items-center gap-2">
+                    <div className="relative h-12 w-12 overflow-hidden rounded bg-muted flex-shrink-0">
+                      {product.imageUrl ? (
+                        <img
+                          src={
+                            product.imageUrl.startsWith("/")
+                              ? `${import.meta.env.VITE_API_BASE_URL}${product.imageUrl}`
+                              : product.imageUrl
+                          }
+                          alt={product.name}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center">
+                          <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex gap-1">
+                      {product.imageUrl && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => {
+                            setSelectedProduct(product);
+                            setIsImageModalOpen(true);
+                          }}
+                          title="View image"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      )}
+                      <Label htmlFor={`img-${product.id}`} className="cursor-pointer">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          type="button"
+                          title="Upload image"
+                          asChild
+                        >
+                          <span>
+                            <Upload className="h-4 w-4" />
+                          </span>
+                        </Button>
+                      </Label>
+                      <input
+                        id={`img-${product.id}`}
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={(e) => handleImageUpload(product.id, e)}
                       />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center">
-                        <ImageIcon className="h-6 w-6 text-muted-foreground" />
-                      </div>
-                    )}
-                    <Label
-                      htmlFor={`img-${product.id}`}
-                      className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100"
-                    >
-                      <Camera className="h-4 w-4 text-white" />
-                    </Label>
-                    <input
-                      id={`img-${product.id}`}
-                      type="file"
-                      className="hidden"
-                      accept="image/*"
-                      onChange={(e) => handleImageUpload(product.id, e)}
-                    />
+                    </div>
                   </div>
                 </TableCell>
                 <TableCell className="font-medium">{product.name}</TableCell>
@@ -345,6 +374,16 @@ const Products = () => {
           </TableBody>
         </Table>
       </div>
+
+      <ProductImageModal
+        isOpen={isImageModalOpen}
+        onClose={() => {
+          setIsImageModalOpen(false);
+          setSelectedProduct(null);
+        }}
+        imageUrl={selectedProduct?.imageUrl || null}
+        productName={selectedProduct?.name || "Product"}
+      />
     </div>
   );
 };

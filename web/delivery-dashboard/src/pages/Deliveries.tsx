@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MapPin, Phone, Package, Clock, User } from "lucide-react";
+import { DeliveryStatus } from "@/types/status";
 
 const Deliveries = () => {
   const { t } = useTranslation();
@@ -81,20 +82,27 @@ const Deliveries = () => {
   }
 
   const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "pending":
+    switch (status.toUpperCase()) {
+      case DeliveryStatus.PENDING:
         return "bg-yellow-100 text-yellow-800";
-      case "assigned":
+      case DeliveryStatus.ASSIGNED:
         return "bg-blue-100 text-blue-800";
-      case "picked_up":
+      case DeliveryStatus.PICKED_UP:
         return "bg-purple-100 text-purple-800";
-      case "on_the_way":
+      case DeliveryStatus.ON_THE_WAY:
         return "bg-indigo-100 text-indigo-800";
-      case "delivered":
+      case DeliveryStatus.DELIVERED:
         return "bg-green-100 text-green-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
+  };
+
+  const formatStatus = (status: string) => {
+    return status
+      .split("_")
+      .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
+      .join(" ");
   };
 
   return (
@@ -116,7 +124,7 @@ const Deliveries = () => {
                   <CardTitle className="text-lg">Order #{delivery.orderId}</CardTitle>
                 </div>
                 <Badge className={getStatusColor(delivery.status)}>
-                  {t(`orders.${delivery.status.toLowerCase()}`) || delivery.status}
+                  {formatStatus(delivery.status)}
                 </Badge>
               </CardHeader>
               <CardContent className="p-6">
